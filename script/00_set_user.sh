@@ -35,6 +35,6 @@ echo "$USERNAME:$PASSWORD" | chpasswd
 
 echo "set sudo"
 usermod -aG sudo $USERNAME
-echo "$USERNAME ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/$USERNAME
+echo "$USERNAME ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers.d/$USERNAME
 
 echo "done"
