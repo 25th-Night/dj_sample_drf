@@ -28,9 +28,9 @@ then
 	SERVER_IP=$(curl -s ifconfig.me)
 fi
 
-# Install Docker
+# Install Docker & Docker-compose & Curl
 echo "Installing Docker"
-sudo apt-get update && sudo apt-get install -y docker.io docker-compose
+sudo apt-get update && sudo apt-get install -y docker.io docker-compose curl
 sudo service docker start
 
 # Clone git
