@@ -33,6 +33,10 @@ ALLOWED_HOSTS = [
     secrets["NCLOUD_SERVER_IP"], "127.0.0.1"
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    secrets["NCLOUD_SERVER_IP"]+':8888' ,'http://127.0.0.1:8888',
+]
+
 
 # Application definition
 
