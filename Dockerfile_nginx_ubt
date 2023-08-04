@@ -8,7 +8,7 @@ RUN chown -R www-data:www-data /var/lib/nginx
 RUN echo "\
 server {\n\
         listen 80;\n\
-        server_name $(curl -s ifconfig.me);\n\
+        server_name 127.0.0.1 $(curl -s ifconfig.me);\n\
 \n\
         location / {\n\
                 proxy_pass http://lion-app:8000;\n\
@@ -20,7 +20,7 @@ server {\n\
                 alias /var/www/html/static/;\n\
                 autoindex off;\n\
         }\n\
-}" >> /etc/nginx/sites-available/django 
+}" >> /etc/nginx/sites-available/django  
 
 RUN ln -s /etc/nginx/sites-available/django /etc/nginx/sites-enabled/django
 
