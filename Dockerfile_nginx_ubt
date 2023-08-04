@@ -1,13 +1,14 @@
 FROM ubuntu:22.04
 
-RUN apt-get update && apt install -y nginx vim
+RUN apt-get update && apt install -y nginx vim curl
 RUN echo "\ndaemon off;" >> /etc/nginx/nginx.conf
 RUN chown -R www-data:www-data /var/lib/nginx
 
 # COPY ./config/django.nginx /etc/nginx/sites-available/django
+ENV SERVER_IP=$(curl -s ifconfig.me)
 RUN echo -e "server {\n\
         listen 80;\n\
-        server_name $(curl -s ifconfig.me);\n\
+        server_name $SERVER_IP;\n\
 \n\
         location / {\n\
                 proxy_pass http://lion-app:8000;\n\
