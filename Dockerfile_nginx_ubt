@@ -5,22 +5,21 @@ RUN echo "\ndaemon off;" >> /etc/nginx/nginx.conf
 RUN chown -R www-data:www-data /var/lib/nginx
 
 # COPY ./config/django.nginx /etc/nginx/sites-available/django
-ENV SERVER_IP=$(curl -s ifconfig.me)
-RUN echo -e "server {\n\
-        listen 80;\n\
-        server_name $SERVER_IP;\n\
-\n\
-        location / {\n\
-                proxy_pass http://lion-app:8000;\n\
-                proxy_set_header Host \\\$host;\n\
-                proxy_set_header X-Real-IP \\\$remote_addr;\n\
-        }\n\
-\n\
-        location /static/ {\n\
-                alias /var/www/html/static/;\n\
-                autoindex off;\n\
-        }\n\
-}" >> /etc/nginx/sites-available/django 
+RUN echo -e "server {\n" >> /etc/nginx/sites-available/django \ 
+    && echo -e "        listen 80;\n" >> /etc/nginx/sites-available/django \ 
+    && echo -e "        server_name $(curl -s ifconfig.me);\n" >> /etc/nginx/sites-available/django \ 
+    && echo -e "\n" >> /etc/nginx/sites-available/django \ 
+    && echo -e "        location / {\n" >> /etc/nginx/sites-available/django \ 
+    && echo -e "                proxy_pass http://lion-app:8000;\n" >> /etc/nginx/sites-available/django \ 
+    && echo -e "                proxy_set_header Host \\\$host;\n" >> /etc/nginx/sites-available/django \ 
+    && echo -e "                proxy_set_header X-Real-IP \\\$remote_addr;\n" >> /etc/nginx/sites-available/django \  
+    && echo -e "        }\n" >> /etc/nginx/sites-available/django \ 
+    && echo -e "\n" >> /etc/nginx/sites-available/django \ 
+    && echo -e "        location /static/ {\n" >> /etc/nginx/sites-available/django \ 
+    && echo -e "                alias /var/www/html/static/;\n" >> /etc/nginx/sites-available/django \ 
+    && echo -e "                autoindex off;\n" >> /etc/nginx/sites-available/django \ 
+    && echo -e "        }\n" >> /etc/nginx/sites-available/django \ 
+    && echo -e "}" >> /etc/nginx/sites-available/django
 
 RUN ln -s /etc/nginx/sites-available/django /etc/nginx/sites-enabled/django
 
