@@ -1,3 +1,7 @@
 from django.contrib import admin
 
-# Register your models here.
+from forum.models import Post, Topic
+
+
+admin.register(Topic)
+admin.register(Post)
