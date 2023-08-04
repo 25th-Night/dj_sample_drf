@@ -1,0 +1,34 @@
+version: '3'
+
+services:
+  lion-app:
+    container_name: lion-app-dc
+    image: ${NCR_ADDRESS}/${NCR_DJANGO_IMAGE_NAME}:${NCR_DJANGO_IMAGE_TAG}
+    volumes:
+      # 현재 폴더를 컨테이너의 /app 경로와 연결하여 공유
+      - .:/app
+       # lion-app 컨테이너의 /var/www/html/static를 볼륨으로 정의
+      - lion-app-static:/var/www/html/static 
+    ports:
+      - 8000:8000
+    command: 
+      - sh -c "jq '.NCLOUD_SERVER_IP = \"${SERVER_IP}\"' ./.secrets/secret.json > ./.secrets/tmp.json"
+      - sh -c "mv ./.secrets/tmp.json ./.secrets/secret.json"
+      - sh -c "python manage.py migrate"
+      - sh -c "gunicorn config.wsgi:application -c config/gunicorn_config.py"
+
+
+
+  nginx:
+    container_name: lion-nginx-dc
+    image: ${NCR_ADDRESS}/${NCR_NGINX_IMAGE_NAME}:${NCR_NGINX_IMAGE_TAG}
+    volumes:
+      # nginx 컨테이너의 /var/www/html/static에 lion-app 컨테이너의 볼륨을 공유
+      - lion-app-static:/var/www/html/static 
+    ports:
+      - 8888:80
+
+volumes:
+  # 볼륨 정의
+  lion-app-static:
+
