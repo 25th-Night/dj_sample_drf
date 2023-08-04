@@ -28,7 +28,7 @@ then
 	SERVER_IP=$(curl -s ifconfig.me)
 fi
 
-# Install Docker & Docker-compose & Curl
+# Install Docker & Docker-compose
 echo "Installing Docker"
 sudo apt-get update && sudo apt-get install -y docker.io docker-compose 
 sudo service docker start
@@ -50,4 +50,4 @@ cat <<EOF > .secrets/secret.json
 EOF
 
 # Docker Compose up
-docker-compose up --build
+docker-compose up -d --build
