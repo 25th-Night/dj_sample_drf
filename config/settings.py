@@ -34,7 +34,7 @@ ALLOWED_HOSTS = [
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    secrets["NCLOUD_SERVER_IP"]+':8888' ,'http://127.0.0.1:8888',
+    f'http://{secrets["NCLOUD_SERVER_IP"]}:8888' ,'http://127.0.0.1:8888',
 ]
 
 
@@ -51,7 +51,7 @@ INSTALLED_APPS = [
 
 ## Thrid party Apps
 INSTALLED_APPS += [
-    
+
 ]
 
 ## Create Apps
