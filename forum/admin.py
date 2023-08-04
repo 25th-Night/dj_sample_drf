@@ -3,5 +3,5 @@ from django.contrib import admin
 from forum.models import Post, Topic
 
 
-admin.register(Topic)
-admin.register(Post)
+admin.site.register(Topic)
+admin.site.register(Post)
