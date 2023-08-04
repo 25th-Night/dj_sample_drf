@@ -47,6 +47,15 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+]
+
+## Thrid party Apps
+INSTALLED_APPS += [
+    
+]
+
+## Create Apps
+INSTALLED_APPS += [
     "forum",
 ]
 
