@@ -14,6 +14,8 @@ services:
       - lion-app-static:/var/www/html/static 
     ports:
       - 8000:8000
+    command:
+      - "/start"
 
   nginx:
     container_name: lion-nginx-dc
