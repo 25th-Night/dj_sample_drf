@@ -1,0 +1,22 @@
+FROM python:3.11-alpine
+
+ARG APP_HOME=/app
+
+ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE 1
+
+RUN mkdir ${APP_HOME}
+WORKDIR ${APP_HOME}
+
+RUN apk add --no-cache bash
+
+COPY ./requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . ${APP_HOME}
+
+
+RUN python manage.py collectstatic --no-input
+RUN python manage.py migrate
+
+CMD [ "gunicorn", "config.wsgi:application", "--config", "config/gunicorn_config.py" ]
