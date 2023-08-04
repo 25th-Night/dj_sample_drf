@@ -4,7 +4,25 @@ RUN apt-get update && apt install -y nginx vim
 RUN echo "\ndaemon off;" >> /etc/nginx/nginx.conf
 RUN chown -R www-data:www-data /var/lib/nginx
 
-COPY ./config/django.nginx /etc/nginx/sites-available/django
+# COPY ./config/django.nginx /etc/nginx/sites-available/django
+RUN echo > /etc/nginx/sites-available/django <<EOF
+server {
+        listen 80;
+        server_name $(curl -s ifconfig.me);
+
+        location / {
+                proxy_pass http://lion-app:8000;
+                proxy_set_header Host \$host;
+                proxy_set_header X-Real-IP \$remote_addr;
+        }
+
+        location /static/ {
+                alias /var/www/html/static/;
+                autoindex off;
+        }
+}
+EOF
+
 RUN ln -s /etc/nginx/sites-available/django /etc/nginx/sites-enabled/django
 
 WORKDIR /etc/nginx
