@@ -15,8 +15,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . ${APP_HOME}
 
+COPY ./script/start /start
+RUN sed -i 's/\r$//g' /start
+RUN chmod +x /start
 
 RUN python manage.py collectstatic --no-input
-RUN python manage.py migrate
 
-CMD [ "gunicorn", "config.wsgi:application", "--config", "config/gunicorn_config.py" ]
+CMD [ "python", "--version"]
