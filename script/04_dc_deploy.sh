@@ -30,7 +30,8 @@ fi
 
 # Install Docker
 echo "Installing Docker"
-sudo apt-get update && sudo apt install -y docker.io docker-compose-plugin
+sudo apt-get update && sudo apt-get install -y docker.io docker-compose
+sudo service docker start
 
 # Clone git
 echo "start to clone"
