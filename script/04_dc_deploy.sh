@@ -42,6 +42,10 @@ cd "$REMOTE_DIRECTORY"
 git clone "$GIT_REPOSITORY" "$PROJECT_DIRECTORY_NAME"
 cd "$PROJECT_DIRECTORY_NAME"
 
+# SET LOCAL_IP in .envs/prod/server
+echo "Set LOCAL_IP=$SERVER_IP in .envs/prod/server"
+sed -i "s/^LOCAL_IP=.*/LOCAL_IP=$SERVER_IP/" .env || echo "LOCAL_IP=$SERVER_IP" >> .envs/prod/server
+
 # Make secret.json
 echo "Make .secrets && secret.json"
 mkdir -p .secrets && touch .secrets/secret.json
