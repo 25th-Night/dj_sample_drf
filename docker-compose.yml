@@ -2,6 +2,8 @@ version: '3'
 
 services:
   lion-app:
+    depends_on:
+      - postgres
     container_name: lion-app-dc
     build:
       context: .
@@ -11,7 +13,7 @@ services:
       # 현재 폴더를 컨테이너의 /app 경로와 연결하여 공유
       - .:/app
        # lion-app 컨테이너의 /var/www/html/static를 볼륨으로 정의
-      - lion-app-static:/var/www/html/static 
+      - lion-app-static:/var/www/html/static
     ports:
       - 8000:8000
     command:
@@ -21,6 +23,8 @@ services:
 
 
   nginx:
+    depends_on:
+      - lion-app
     container_name: lion-nginx-dc
     build:
       context: .
@@ -33,6 +37,14 @@ services:
       - lion-app-static:/var/www/html/static 
     ports:
       - 8888:80
+    env_file:
+      - ./.env
+
+  postgres:
+    container_name: postgres-dc
+    image: postgres:15
+    ports:
+      - 5432:5432
     env_file:
       - ./.env
 
