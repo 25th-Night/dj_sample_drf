@@ -28,7 +28,7 @@ then
 fi
 
 echo "add user"
-useradd -s /bin/bash -d /home/lion -m $USERNAME
+useradd -s /bin/bash -d /home/$USERNAME -m $USERNAME
 
 echo "set password"
 echo "$USERNAME:$PASSWORD" | chpasswd
