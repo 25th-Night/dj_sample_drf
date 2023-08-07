@@ -1,4 +1,4 @@
 #!/bin/bash
 
-sed -i "s/\$LOCAL_IP/$LOCAL_IP;/" /etc/nginx/sites-available/django
+sed -i "s/\$LOCAL_IP/$LOCAL_IP/" /etc/nginx/sites-available/django
 service nginx restart
