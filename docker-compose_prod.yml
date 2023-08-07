@@ -17,10 +17,14 @@ services:
     command:
       - "/start"
     env_file:
-      - ./prod.env
+      - ./.envs/prod/django
+      - ./.envs/prod/db
+      - ./.envs/prod/server
 
 
   nginx:
+    depends_on:
+      - lion-app
     container_name: lion-nginx-dc
     build:
       context: .
@@ -34,7 +38,7 @@ services:
     ports:
       - 8888:80
     env_file:
-      - ./prod.env
+      - ./.envs/prod/server
 
 volumes:
   # 볼륨 정의
