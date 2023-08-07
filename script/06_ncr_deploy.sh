@@ -1,6 +1,5 @@
 #!/bin/bash
 
-source "./.env"
 
 SERVER_IP=
 MANUAL="사용법: $0 [-i 서버주소]"
@@ -10,25 +9,30 @@ MANUAL="사용법: $0 [-i 서버주소]"
 
 while getopts "i:" option
 do
-	case $option in
-		i)
-			SERVER_IP=$OPTARG
-			;;
-		*)
-			echo $MANUAL
-			exit 1
-			;;
-	esac
+        case $option in
+                i)
+                        SERVER_IP=$OPTARG
+                        ;;
+                *)
+                        echo $MANUAL
+                        exit 1
+                        ;;
+        esac
 done
 
 if [ -z "$SERVER_IP" ]
 then
-	SERVER_IP=$(curl -s ifconfig.me)
+        SERVER_IP=$(curl -s ifconfig.me)
 fi
+
+# SET NCP_SERVER_IP in .env
+echo "Set NCP_SERVER_IP=$SERVER_IP in .env"
+sed -i "s/^NCP_SERVER_IP=.*/NCP_SERVER_IP=$SERVER_IP/" .env || echo "NCP_SERVER_IP=$SERVER_IP" >> .env
+source ./.env
 
 # Install Docker & Docker-compose
 echo "Installing Docker"
-sudo apt-get update && sudo apt-get install -y docker.io docker-compose 
+sudo apt-get update && sudo apt-get install -y docker.io docker-compose
 sudo service docker start
 
 # NCR 로그인
@@ -40,27 +44,17 @@ echo "Pull Django Image from Naver Container Registry"
 docker pull $NCR_ADDRESS/$NCR_DJANGO_IMAGE_NAME:$NCR_DJANGO_IMAGE_TAG
 
 echo "Pull Nginx Image from Naver Container Registry"
-docker pull $NCR_ADDRESS/$NCR_NGINX_IMAGE_NAME:$NCR_NGINX_IMAGE_TAG=
+docker pull $NCR_ADDRESS/$NCR_NGINX_IMAGE_NAME:$NCR_NGINX_IMAGE_TAG
+
 
 # Docker Compose up
 echo "Docker Compose up"
-docker-compose -f docker-compose_ncr.yml up -d
+docker-compose up -d --build
 
-# Create Nginx Setting file
-echo "Create Nginx Setting file"
-cat > django <<EOF 
-server {
-        listen 80;
-        server_name $SERVER_IP;
+# Modify Server name at Nginx setting file in Docker Container
+echo "Modify Server name at Nginx setting file in Docker Container"
+docker exec lion-nginx-dc sed -i "s/server_name.*$/server_name $SERVER_IP;/" /etc/nginx/sites-available/django
 
-        location / {
-                proxy_pass http://127.0.0.1:8000;
-                proxy_set_header Host \$host;
-                proxy_set_header X-Real-IP \$remote_addr;
-        }
-}
-EOF
-
-# Overwrite Nginx setting file in Docker Container
-echo "Overwrite Nginx setting file in Docker Container"
-docker cp django lion-nginx-dc:$REMOTE_NGINX_CONF_FILE
+# Restart All Container
+echo "Restart All Container"
+docker-compose restart
