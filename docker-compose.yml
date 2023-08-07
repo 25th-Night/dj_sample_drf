@@ -31,8 +31,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile_nginx_ubt
-#      args:
-#        LOCAL_IP: "223.130.134.180"
     image: lion-nginx
     volumes:
       # nginx 컨테이너의 /var/www/html/static에 lion-app 컨테이너의 볼륨을 공유

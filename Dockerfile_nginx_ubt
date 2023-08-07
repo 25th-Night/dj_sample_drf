@@ -5,22 +5,6 @@ RUN echo "\ndaemon off;" >> /etc/nginx/nginx.conf
 RUN chown -R www-data:www-data /var/lib/nginx
 
 COPY ./config/django.nginx /etc/nginx/sites-available/django
-#RUN echo "\
-#server {\n\
-#        listen 80;\n\
-#        server_name 127.0.0.1 $(curl -s ifconfig.me);\n\
-#\n\
-#        location / {\n\
-#                proxy_pass http://lion-app:8000;\n\
-#                proxy_set_header Host \$host;\n\
-#                proxy_set_header X-Real-IP \$remote_addr;\n\
-#        }\n\
-#\n\
-#        location /static/ {\n\
-#                alias /var/www/html/static/;\n\
-#                autoindex off;\n\
-#        }\n\
-#}" > /etc/nginx/sites-available/django
 
 RUN ln -s /etc/nginx/sites-available/django /etc/nginx/sites-enabled/django
 
