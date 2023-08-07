@@ -49,8 +49,11 @@ services:
       - 5432:5432
     env_file:
       - ./.envs/local/db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
 volumes:
   # 볼륨 정의
   lion-app-static:
+  postgres_data:
 
