@@ -16,18 +16,25 @@ services:
       - 8000:8000
     command:
       - "/start"
+    env_file:
+      - ./prod.env
+
 
   nginx:
     container_name: lion-nginx-dc
     build:
       context: .
       dockerfile: Dockerfile_nginx_ubt
+#      args:
+#        LOCAL_IP: "223.130.134.180"
     image: lion-nginx
     volumes:
       # nginx 컨테이너의 /var/www/html/static에 lion-app 컨테이너의 볼륨을 공유
       - lion-app-static:/var/www/html/static 
     ports:
       - 8888:80
+    env_file:
+      - ./prod.env
 
 volumes:
   # 볼륨 정의
