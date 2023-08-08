@@ -1,10 +1,10 @@
 from pymongo import MongoClient
 
-client = MongoClient()
+client = MongoClient(host="mongo")
 db = client.likelion  # db 생성
 
 
-def create_blog() -> bool:
+def create_blog(request) -> bool:
     blog = {
         "title": "My first blog",
         "content": "This is my first blog",
@@ -17,11 +17,11 @@ def create_blog() -> bool:
         print(e)
         return False
 
-def update_blog():
+def update_blog(request):
     pass
 
-def delete():
+def delete_blog(request):
     pass
 
-def read_blog():
+def read_blog(request):
     pass
