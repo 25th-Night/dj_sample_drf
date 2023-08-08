@@ -1,3 +1,4 @@
+from django.http import HttpResponse, JsonResponse
 from pymongo import MongoClient
 
 client = MongoClient(host="mongo")
@@ -11,11 +12,13 @@ def create_blog(request) -> bool:
         "author": "lion",
     }
     try:
-        db.blogs.insert_one(blog)  # blogs 라는 collection에 데이터 추가
-        return True
+        db.blogs.insert_one(blog)
+        # return JsonResponse({"status": True})
+        return HttpResponse("Success")
     except Exception as e:
         print(e)
-        return False
+        # return JsonResponse({"status": False})
+        return HttpResponse("Failed")
 
 def update_blog(request):
     pass
