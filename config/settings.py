@@ -52,6 +52,7 @@ INSTALLED_APPS = [
 ## Thrid party Apps
 INSTALLED_APPS += [
     "rest_framework",
+    "drf_spectacular",
 ]
 
 ## Create Apps
