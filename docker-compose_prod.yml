@@ -20,6 +20,8 @@ services:
       - ./.envs/prod/django
       - ./.envs/prod/db
       - ./.envs/prod/server
+    environment:
+      - AWS_SECRET_NAME = like/lion/prod
 
 
   nginx:
