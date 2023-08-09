@@ -10,6 +10,7 @@ services:
       dockerfile: Dockerfile_django
     image: lion-app
     volumes:
+      - ~/.aws:/root/.aws:ro
       - .:/app
       - lion-app-static:/var/www/html/static
     ports:
@@ -20,6 +21,8 @@ services:
       - ./.envs/local/django
       - ./.envs/local/db
       - ./.envs/local/server
+    environment:
+      - AWS_SECRET_NAME = like/lion/lecture
 
 
   nginx:
@@ -48,16 +51,6 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
-  mongo:
-    container_name: mongo-dc
-    image: mongo:latest
-    ports:
-      - 27017:27017
-    volumes:
-      - mongo_data:/data/db
-
 volumes:
   lion-app-static:
   postgres_data:
-  mongo_data:
-
