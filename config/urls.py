@@ -17,6 +17,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
+
 from blog.urls import router as blog_router
 from forum.urls import router as forum_router
 
@@ -25,4 +27,8 @@ urlpatterns = [
     path("blog/", include(blog_router.urls)),
     path("forum/", include(forum_router.urls)),
     path("api-auth/", include("rest_framework.urls")),
+    # drf-spectacular
+    path('api/schema/', SpectacularAPIView.as_view(), name='api-schema'),
+    path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='api-swagger-ui'),
+    path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='api-redoc'),
 ]
