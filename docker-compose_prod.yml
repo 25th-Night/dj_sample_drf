@@ -21,7 +21,7 @@ services:
       - ./.envs/prod/db
       - ./.envs/prod/server
     environment:
-      - AWS_SECRET_NAME = like/lion/prod
+      - AWS_SECRET_NAME=like/lion/prod
 
 
   nginx:

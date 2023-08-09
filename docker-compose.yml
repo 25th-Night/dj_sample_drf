@@ -22,7 +22,7 @@ services:
       - ./.envs/local/db
       - ./.envs/local/server
     environment:
-      - AWS_SECRET_NAME = like/lion/lecture
+      - AWS_SECRET_NAME=like/lion/lecture
 
 
   nginx:
