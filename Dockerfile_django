@@ -23,7 +23,5 @@ COPY ./script/entrypoint /entrypoint
 RUN sed -i 's/\r$//g' /entrypoint
 RUN chmod +x /entrypoint
 
-RUN python manage.py collectstatic --no-input
-
 ENTRYPOINT [ "/entrypoint" ]
 CMD [ "python", "--version"]
