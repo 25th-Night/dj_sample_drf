@@ -12,3 +12,13 @@ class TopicSerializer(serializers.ModelSerializer):
             "updated_at",
         )
 
+
+class PostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = "__all__"
+        read_only_fields = (
+            "id",
+            "created_at",
+            "updated_at",
+        )
