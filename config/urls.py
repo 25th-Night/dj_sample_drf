@@ -29,6 +29,6 @@ urlpatterns = [
     path("api-auth/", include("rest_framework.urls")),
     # drf-spectacular
     path('api/schema/', SpectacularAPIView.as_view(), name='api-schema'),
-    path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='api-swagger-ui'),
-    path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='api-redoc'),
+    path('api/docs/', SpectacularSwaggerView.as_view(url_name='api-schema'), name='api-swagger-ui'),
+    path('api/redoc/', SpectacularRedocView.as_view(url_name='api-schema'), name='api-redoc'),
 ]
