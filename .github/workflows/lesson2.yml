@@ -1,0 +1,24 @@
+name: lesson2
+
+on:
+    push:
+        branches:
+            - main
+
+jobs:
+    deployment:
+        name: deploy on remote server
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: checkout repository
+              uses: actions/checkout@v3
+            - name: git pull via SSH
+              uses: appleboy/ssh-action@v1.0.0
+              with:
+                  host: ${{ secrets.NCP_HOST }}
+                  username: ${{ secrets.SSH_USERNAME }}
+                  password: ${{ secrets.SSH_PASSWORD }}
+                  script: |
+                      cd dj_sample_drf
+                      git pull origin main
