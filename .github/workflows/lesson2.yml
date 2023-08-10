@@ -1,9 +1,7 @@
-name: lesson2
+name: CD by git pull
 
 on:
-    push:
-        branches:
-            - main
+    workflow_dispatch:
 
 jobs:
     deployment:
