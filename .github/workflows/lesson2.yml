@@ -22,3 +22,5 @@ jobs:
                   script: |
                       cd dj_sample_drf
                       git pull origin main
+            - name: docker-compose up & build
+              run: docker-compose -f docker-compose_prod.yml up -d --build
