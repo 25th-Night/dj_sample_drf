@@ -25,6 +25,12 @@ jobs:
             - name: docker images
               if: ${{ always() }}
               run: docker images lion-app
+            - name: Upload artifact
+              if: ${{ always() }}
+              uses: actions/upload-artifact@v3
+              with:
+                  name: docker-image
+                  path: /tmp/myimage.tar
 
     docker-images:
         if: ${{ always() }}
@@ -32,5 +38,12 @@ jobs:
         name: docker images
         runs-on: ubuntu-latest
         steps:
+            - name: Download artifact
+              uses: actions/download-artifact@v3
+              with:
+                  name: docker-image
+                  path: /tmp
             - name: docker images
-              run: docker images lion-app
+              run: |
+                  docker load --input /tmp/myimage.tar
+                  docker images lion-app
