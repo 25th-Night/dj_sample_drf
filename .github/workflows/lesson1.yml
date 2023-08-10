@@ -1,0 +1,25 @@
+name: Check Push or Pull Request
+
+on:
+    pull_request:
+        types:
+            - opened
+    push:
+        branches:
+            - main
+
+jobs:
+    check_event_type:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v3
+
+            - name: Print Event Type
+              run: |
+                  if [ -n "$GITHUB_EVENT_NAME" ]; then
+                    echo "Event type: $GITHUB_EVENT_NAME"
+                  else
+                    echo "Event type could not be determined."
+                  fi
