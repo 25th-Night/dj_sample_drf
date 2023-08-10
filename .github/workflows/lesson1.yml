@@ -20,4 +20,7 @@ jobs:
         steps:
             - uses: actions/checkout@v3
             - name: build
-              run: docker build --tag lion-app .
+              working-directory: .
+              run: docker build -f Dockerfile_django --tag lion-app .
+            - name: docker images
+              run: docker images lion-app
