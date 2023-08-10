@@ -22,6 +22,9 @@ jobs:
             - name: build
               working-directory: .
               run: docker build -f Dockerfile_django --tag lion-app .
+            - name: docker images
+              if: ${{ always() }}
+              run: docker images lion-app
 
     docker-images:
         if: ${{ always() }}
