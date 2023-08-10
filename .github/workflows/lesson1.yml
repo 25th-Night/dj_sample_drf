@@ -22,5 +22,11 @@ jobs:
             - name: build
               working-directory: .
               run: docker build -f Dockerfile_django --tag lion-app .
+
+    docker-images:
+        needs: docker-build
+        name: docker images
+        runs-on: ubuntu-latest
+        steps:
             - name: docker images
               run: docker images lion-app
