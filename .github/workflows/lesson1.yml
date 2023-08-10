@@ -27,6 +27,7 @@ jobs:
                   context: .
                   tags: lion-app:latest
                   outputs: type=docker, dest=/tmp/lion_app.tar
+                  file: Dockerfile_django
             - name: upload artifact
               uses: actions/upload-artifact@v3
               with:
