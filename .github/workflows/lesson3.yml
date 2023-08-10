@@ -32,6 +32,8 @@ jobs:
 
     # Pull Image From NCR / Run new container
     pull-images-and-run-container:
+        if: ${{ success() }}
+        needs: build-push-images
         name: pull images from NCR and run container
         runs-on: ubuntu-latest
         steps:
