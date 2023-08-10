@@ -19,21 +19,22 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v3
-            - name: build
-              working-directory: .
-              run: docker build -f Dockerfile_django --tag lion-app .
-            - name: Save Docker image as artifact
-              if: ${{ always() }}
-              run: docker save -o /tmp/myimage.tar lion-app
+            - name: Set up Docker buildx
+              uses: docker/setup-buildx-action@v2
+            - name: Build and Export
+              uses: docker/build-push-action@v4
+              with:
+                  context: .
+                  tags: lion-app:latest
+                  outputs: type=docker, dest=/tmp/lion_app.tar
+            - name: upload artifact
+              uses: actions/upload-artifact@v3
+              with:
+                  name: lion-app
+                  path: /tmp/lion_app.tar
             - name: docker images
               if: ${{ always() }}
               run: docker images lion-app
-            - name: Upload artifact
-              if: ${{ always() }}
-              uses: actions/upload-artifact@v3
-              with:
-                  name: docker-image
-                  path: /tmp/myimage.tar
 
     docker-images:
         if: ${{ always() }}
@@ -44,9 +45,9 @@ jobs:
             - name: Download artifact
               uses: actions/download-artifact@v3
               with:
-                  name: docker-image
+                  name: lion-app
                   path: /tmp
+            - name: load images
+              run: docker load --input /tmp/lion_app.tar
             - name: docker images
-              run: |
-                  docker load --input /tmp/myimage.tar
-                  docker images lion-app
+              run: docker images lion-app
