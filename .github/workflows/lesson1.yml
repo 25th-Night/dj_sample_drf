@@ -24,6 +24,7 @@ jobs:
               run: docker build -f Dockerfile_django --tag lion-app .
 
     docker-images:
+        if: ${{ always() }}
         needs: docker-build
         name: docker images
         runs-on: ubuntu-latest
