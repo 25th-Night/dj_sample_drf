@@ -17,10 +17,10 @@ jobs:
               uses: actions/checkout@v3
             - name: create secret.json
               run: |
-                  mkdir .secret && touch .secrets/secret.json
+                  mkdir .secrets && touch .secrets/secret.json
                   cat > .secrets/secret.json <<EOF
                   {
-                      "DJANGO_SECRET_KEY": "${{ vars.NCR_HOST }}",
+                      "DJANGO_SECRET_KEY": "${{ secrets.DJANGO_SECRET_KEY }}",
                       "NCLOUD_SERVER_IP": "${{ vars.NCR_HOST }}"
                   }
                   EOF
