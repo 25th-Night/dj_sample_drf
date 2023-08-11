@@ -6,13 +6,15 @@ on:
             - main
 
 env:
-    IMAGE_TAG: ${{ vars.NCR_HOST }}/lion-app:latest
+    IMAGE_NAME: ${{ vars.NCR_HOST }}/lion-app
     CONTAINER_NAME: lion-app-dc
 
 jobs:
     build-and-push:
         name: build images and push to NCR
         runs-on: ubuntu-latest
+        outputs:
+            image-tag: ${{ steps.image-tag.outputs.TIMESTAMP }}
         steps:
             - name: checkout repository
               uses: actions/checkout@v3
@@ -33,11 +35,14 @@ jobs:
                   registry: ${{ vars.NCR_HOST }}
                   username: ${{ secrets.NCP_ACCESS_KEY_ID }}
                   password: ${{ secrets.NCP_SECRET_ACCESS_KEY }}
+            - name: Get current timestamp
+              id: image-tag
+              run: echo "TIMESTAMP=$(date "+$s")" >> "$GITHUB_OUTPUT"
             - name: Build and Push
               uses: docker/build-push-action@v4
               with:
                   context: .
-                  tags: ${{ env.IMAGE_TAG }}
+                  tags: ${{ env.IMAGE_NAME }}:${{ steps.image-tag.outputs.TIMESTAMP }}
                   file: Dockerfile_django
                   push: true
 
@@ -62,12 +67,12 @@ jobs:
                       ${{ vars.NCR_HOST }} \
                       -u ${{ secrets.NCP_ACCESS_KEY_ID }} \
                       -p ${{ secrets.NCP_SECRET_ACCESS_KEY }}
-                      docker pull ${{ env.IMAGE_TAG }}
+                      docker pull ${{ env.IMAGE_NAME }}:${{ needs.build-and-push.outputs.image-tag }}
                       # docker-compose -f docker-compose_prod.yml up -d
                       docker stop ${{ env.CONTAINER_NAME }} && docker rm ${{ env.CONTAINER_NAME }}
                       docker run -p 8000:8000 -d -v ~/.aws:/root/.aws:ro \
                       --env-file .envs/prod/django --env-file .envs/prod/db --env-file .envs/prod/server \
                       --name ${{ env.CONTAINER_NAME }} \
-                      ${{ env.IMAGE_TAG }} /start
+                      ${{ env.IMAGE_NAME }}:${{ needs.build-and-push.outputs.image-tag }} /start
             - name: echo IMAGE_TAG
               run: echo $IMAGE_TAG
