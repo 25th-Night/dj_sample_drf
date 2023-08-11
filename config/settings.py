@@ -31,11 +31,15 @@ SECRET_KEY = secrets["DJANGO_SECRET_KEY"]
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    secrets["NCLOUD_SERVER_IP"], "127.0.0.1"
+    secrets["NCLOUD_SERVER_IP"], 
+    "lion-lb-18904314-4889fba25a98.kr.lb.naverncp.com",
+    "127.0.0.1"
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    f'http://{secrets["NCLOUD_SERVER_IP"]}:8888' ,'http://127.0.0.1:8888',
+    f'http://{secrets["NCLOUD_SERVER_IP"]}:8888', 
+    'http://lion-lb-18904314-4889fba25a98.kr.lb.naverncp.com',
+    'http://127.0.0.1:8888',
 ]
 
 
