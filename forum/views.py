@@ -25,7 +25,7 @@ class TopicViewSet(viewsets.ModelViewSet):
         return super().create(request, *args, **kwargs)
 
 
-@extend_schema(tags=["Post", "Forum"])
+@extend_schema(tags=["Post"])
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
