@@ -37,7 +37,7 @@ jobs:
                   password: ${{ secrets.NCP_SECRET_ACCESS_KEY }}
             - name: Get current timestamp
               id: image-tag
-              run: echo "TIMESTAMP=$(date "+$s")" >> "$GITHUB_OUTPUT"
+              run: echo "TIMESTAMP=$(date "+%s")" >> "$GITHUB_OUTPUT"
             - name: Build and Push
               uses: docker/build-push-action@v4
               with:
