@@ -5,6 +5,10 @@ on:
         branches:
             - main
 
+# 모든 job에 환경 변수 적용
+env:
+    IMAGE_TAG: ${{ vars.NCR_HOST }}/lion-app:latest
+
 jobs:
     # Build Image / Push Image to NCR
     build-push-images:
@@ -25,7 +29,7 @@ jobs:
               uses: docker/build-push-action@v4
               with:
                   context: .
-                  tags: ${{ vars.NCR_HOST }}/lion-app:latest
+                  tags: ${{ env.IMAGE_TAG }}
                   file: Dockerfile_django
                   push: true
 
@@ -47,6 +51,9 @@ jobs:
                   script: |
                       cd dj_sample_drf
                       git pull origin main
-                      docker login ${{ vars.NCR_HOST }} -u ${{ secrets.NCP_ACCESS_KEY_ID }} -p ${{ secrets.NCP_SECRET_ACCESS_KEY }}
-                      docker pull ${{ vars.NCR_HOST }}/lion-app:latest
+                      docker login \
+                      ${{ vars.NCR_HOST }} \
+                      -u ${{ secrets.NCP_ACCESS_KEY_ID }} \
+                      -p ${{ secrets.NCP_SECRET_ACCESS_KEY }}
+                      docker pull ${{ env.IMAGE_TAG }}
                       docker-compose -f docker-compose_prod.yml up -d
