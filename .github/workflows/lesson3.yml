@@ -62,6 +62,6 @@ jobs:
                       -u ${{ secrets.NCP_ACCESS_KEY_ID }} \
                       -p ${{ secrets.NCP_SECRET_ACCESS_KEY }}
                       docker pull ${{ env.IMAGE_TAG }}
-                      docker-compose -f docker-compose_prod.yml restart lion-app
+                      docker-compose -f docker-compose_prod.yml up -d
             - name: echo IMAGE_TAG
               run: echo $IMAGE_TAG
