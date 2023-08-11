@@ -18,13 +18,35 @@ jobs:
             - name: Login to NCR
               uses: docker/login-action@v2
               with:
-                  registry: ${{ secrets.NCR_HOST }}
+                  registry: ${{ vars.NCR_HOST }}
                   username: ${{ secrets.NCP_ACCESS_KEY_ID }}
                   password: ${{ secrets.NCP_SECRET_ACCESS_KEY }}
             - name: Build and Push
               uses: docker/build-push-action@v4
               with:
                   context: .
-                  tags: browneyed.kr.ncr.ntruss.com/lion-app:latest
+                  tags: ${{ vars.NCR_HOST }}/lion-app:latest
                   file: Dockerfile_django
                   push: true
+
+    # Pull Image From NCR / Run new container
+    pull-images-and-run-container:
+        if: ${{ success() }}
+        needs: build-push-images
+        name: deploy
+        runs-on: ubuntu-latest
+        steps:
+            - name: checkout repository
+              uses: actions/checkout@v3
+            - name: pull and run the image
+              uses: appleboy/ssh-action@v1.0.0
+              with:
+                  host: ${{ secrets.NCP_HOST }}
+                  username: ${{ secrets.SSH_USERNAME }}
+                  password: ${{ secrets.SSH_PASSWORD }}
+                  script: |
+                      cd dj_sample_drf
+                      git pull origin main
+                      docker login ${{ vars.NCR_HOST }} -u ${{ secrets.NCP_ACCESS_KEY_ID }} -p ${{ secrets.NCP_SECRET_ACCESS_KEY }}
+                      docker pull ${{ vars.NCR_HOST }}/lion-app:latest
+                      docker-compose -f docker-compose_prod.yml up -d
