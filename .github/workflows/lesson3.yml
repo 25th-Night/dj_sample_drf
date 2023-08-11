@@ -21,7 +21,7 @@ jobs:
                   cat > .secrets/secret.json <<EOF
                   {
                       "DJANGO_SECRET_KEY": "${{ secrets.DJANGO_SECRET_KEY }}",
-                      "NCLOUD_SERVER_IP": "${{ vars.NCR_HOST }}"
+                      "NCLOUD_SERVER_IP": "${{ secrets.NCP_HOST }}"
                   }
                   EOF
             - name: Set up Docker buildx
