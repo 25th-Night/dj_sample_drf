@@ -13,7 +13,7 @@ class Topic(models.Model):
         return self.name
 
 class Post(models.Model):
-    topic = models.ForeignKey(Topic, on_delete=models.CASCADE, related_name="post_topic")
+    topic = models.ForeignKey(Topic, on_delete=models.CASCADE, related_name="posts")
     title = models.TextField(max_length=200)
     content = models.TextField()
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
