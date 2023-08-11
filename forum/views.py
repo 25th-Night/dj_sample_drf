@@ -11,6 +11,15 @@ class TopicViewSet(viewsets.ModelViewSet):
     queryset = Topic.objects.all()
     serializer_class = TopicSerializer
 
+    def get_queryset(self):
+        queryset = Topic.objects.all()
+        name = self.request.query_params.get('name')
+
+        if name is not None:
+            queryset = queryset.filter(name__icontains=name)
+        
+        return queryset
+
 
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
