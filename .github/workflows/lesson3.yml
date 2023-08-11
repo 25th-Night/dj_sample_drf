@@ -62,6 +62,11 @@ jobs:
                       -u ${{ secrets.NCP_ACCESS_KEY_ID }} \
                       -p ${{ secrets.NCP_SECRET_ACCESS_KEY }}
                       docker pull ${{ env.IMAGE_TAG }}
-                      docker-compose -f docker-compose_prod.yml up -d
+                      # docker-compose -f docker-compose_prod.yml up -d
+                      docker stop ${{ env.CONTAINER_NAME }} && docker rm ${{ env.CONTAINER_NAME }}
+                      docker run -p 8000:8000 -d -v ~/.aws:/root/.aws:ro \
+                      --env-file .envs/prod/django --env-file .envs/prod/db --env-file .envs/prod/server \
+                      --name ${{ env.CONTAINER_NAME }} \
+                      ${{ env.IMAGE_TAG }} /start
             - name: echo IMAGE_TAG
               run: echo $IMAGE_TAG
