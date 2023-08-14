@@ -2,7 +2,7 @@ name: workflow run
 
 on:
     workflow_run:
-        workflows: ["call workfloww"]
+        workflows: ["call workflow"]
         types:
             - completed
 
