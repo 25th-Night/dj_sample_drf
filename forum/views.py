@@ -1,6 +1,7 @@
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 
-from rest_framework import viewsets
+from rest_framework import viewsets, status
+from rest_framework.response import Response
 
 from .models import Post, Topic
 from .serializers import PostSerializer, TopicSerializer
@@ -10,15 +11,18 @@ from .serializers import PostSerializer, TopicSerializer
 class TopicViewSet(viewsets.ModelViewSet):
     queryset = Topic.objects.all()
     serializer_class = TopicSerializer
-
-    def get_queryset(self):
+    
+    @extend_schema(parameters=[OpenApiParameter(name='name', description='Filter by name', required=False, type=str)])
+    def list(self, request, *args, **kwargs):
         queryset = Topic.objects.all()
-        name = self.request.query_params.get('name')
+        name = request.query_params.get('name')
 
         if name is not None:
             queryset = queryset.filter(name__icontains=name)
-        
-        return queryset
+
+        serialized_topic_data = self.serializer_class(queryset, many=True).data
+        return Response(status=status.HTTP_200_OK, data=serialized_topic_data)
+
     
     @extend_schema(summary="새 토픽 생성")
     def create(self, request, *args, **kwargs):
