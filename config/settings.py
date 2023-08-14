@@ -33,12 +33,14 @@ DEBUG = True
 ALLOWED_HOSTS = [
     secrets["NCLOUD_SERVER_IP"], 
     "lion-lb-18904314-4889fba25a98.kr.lb.naverncp.com",
+    os.getenv("LOAD_BALANCER_DOMAIN", 'localhost'),
     "127.0.0.1"
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     f'http://{secrets["NCLOUD_SERVER_IP"]}:8888', 
     'http://lion-lb-18904314-4889fba25a98.kr.lb.naverncp.com',
+    f'http://{os.getenv("LOAD_BALANCER_DOMAIN", "localhost")}',
     'http://127.0.0.1:8888',
 ]
 
