@@ -4,6 +4,10 @@ on:
     push:
         branches:
             - main
+        paths:
+            - github/workflows/CD.yml
+            - *.py
+            - requirements.txt
 
 env:
     IMAGE: ${{ vars.NCR_HOST }}/lion-app
