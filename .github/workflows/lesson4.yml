@@ -1,0 +1,12 @@
+name: reusable workflow
+
+on:
+    workflow_call:
+
+jobs:
+    greeting:
+        name: greeting
+        runs-on: ubuntu-latest
+        steps:
+            - name: greeting
+              run: echo "Hello, Stranger!"
