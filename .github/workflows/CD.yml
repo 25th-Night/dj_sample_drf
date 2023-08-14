@@ -5,7 +5,7 @@ on:
         branches:
             - main
         paths:
-            - github/workflows/CD.yml
+            - .github/workflows/CD.yml
             - "**.py"
             - requirements.txt
 
