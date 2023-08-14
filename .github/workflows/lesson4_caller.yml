@@ -12,5 +12,8 @@ jobs:
 
     call-workflow:
         uses: ./.github/workflows/lesson4.yml
+        strategy:
+            matrix:
+                person: ["Seonwoo", "Eunsub", "John"]
         with:
-            person: CSW
+            person: ${{ matrix.person}}
