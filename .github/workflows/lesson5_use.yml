@@ -15,19 +15,19 @@ jobs:
               with:
                   script: |
                       let allArtifacts = await github.rest.actions.listWorkflowRunArtifacts({
-                      owner: context.repo.owner,
-                      repo: context.repo.repo,
-                      run_id: context.payload.workflow_run.id,
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        run_id: context.payload.workflow_run.id,
                       });
                       let matchArtifact = allArtifacts.data.artifacts.filter((artifact) => {
-                      return artifact.name == "pr_number"
+                          return artifact.name == "pr_number"
                       })[0];
                       let download = await github.rest.actions.downloadArtifact({
                           owner: context.repo.owner,
                           repo: context.repo.repo,
                           artifact_id: matchArtifact.id,
                           archive_format: 'zip',
-                      })
+                      });
                       let fs = require('fs');
                       let filePath = `${process.env.GITHUB_WORKSPACE}/pr_number.zip`;
                       fs.writeFileSync(filePath, Buffer.from(download.data));
@@ -38,7 +38,7 @@ jobs:
             - name: Comment on PR
               uses: actions/github-script@v6
               with:
-                  github-token: $${{ secrets.GITHUB_TOKEN }}
+                  github-token: ${{ secrets.GITHUB_TOKEN }}
                   script: |
                       let fs = require('fs');
                       let pr_number = Number(fs.readFileSync('./pr_number'));
@@ -47,4 +47,4 @@ jobs:
                         repo: context.repo.repo,
                         issue_number: pr_number,
                         body: "Thank you for the PR!"
-                      })
+                      });
