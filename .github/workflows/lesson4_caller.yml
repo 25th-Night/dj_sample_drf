@@ -5,7 +5,7 @@ on:
 
 jobs:
     get-name:
-        name: echo name
+        name: echo name1
         runs-on: ubuntu-latest
         steps:
             - run: echo "This workflow is ${{ github.workflow }}"
