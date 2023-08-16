@@ -1,0 +1,2 @@
+alias runserver="docker run -p 8000:8000 -d --name lion-app-dc --env-file .env browneyed.kr.ncr.ntruss.com/lion-app:latest"
+alias stopserver="docker stop lion-app-dc && docker rm lion-app-dc"
