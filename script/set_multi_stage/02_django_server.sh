@@ -145,4 +145,4 @@ echo "Run Django Container"
 sudo docker run -p 8000:8000 -d \
 -v /home/lion/.aws:/root/.aws:ro -v /home/lion/$DIRECTORY_NAME/.secrets/secret.json:/app/.secrets/secret.json:ro \
 --env-file .envs/prod/django --env-file .envs/prod/db --env-file .envs/prod/server \
---name lion-app-dc $NCR_HOST/$DJANGO_IMAGE_TAG /start
+--name lion-app-dc $NCR_HOST/$DJANGO_IMAGE_TAG
