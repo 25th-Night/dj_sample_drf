@@ -12,11 +12,31 @@ env:
     CONTAINER_NAME: lion-app-dc
 
 jobs:
+    lint:
+        name: Check lint (black)
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout Repository
+              uses: actions/checkout@v3
+
+            - name: Setup Python
+              uses: actions/setup-python@v4
+              with:
+                python-version: '3.11'
+
+            - name: Install black
+              run: pip install black
+
+            - name: check black
+              run: black --check .
+
+
     build:
+        needs: lint
         name: build image
         runs-on: ubuntu-latest
         steps:
-            - name: checkout repository
+            - name: Checkout Repository
               uses: actions/checkout@v3
 
             - name: Set up Docker buildx
