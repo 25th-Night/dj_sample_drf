@@ -62,8 +62,9 @@ jobs:
                       -p ${{ secrets.NCP_SECRET_ACCESS_KEY }}
                       docker pull ${{ env.IMAGE_TAG }}
                       docker stop ${{ env.CONTAINER_NAME }} && docker rm ${{ env.CONTAINER_NAME }}
-                      docker run -p 8000:8000 -d -v ~/.aws:/root/.aws:ro \
-                      --env-file .envs/prod/django --env-file .envs/prod/db --env-file .envs/prod/server \
+                      docker run -d -p 8000:8000 \
+                      -v ~/.aws:/root/.aws:ro \
+                      --env-file .env \
                       --name ${{ env.CONTAINER_NAME }} \
                       ${{ env.IMAGE_TAG }}
             - name: echo IMAGE_TAG
