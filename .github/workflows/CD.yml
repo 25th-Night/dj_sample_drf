@@ -22,15 +22,6 @@ jobs:
         steps:
             - name: checkout repository
               uses: actions/checkout@v3
-            - name: create secret.json
-              run: |
-                  mkdir .secrets && touch .secrets/secret.json
-                  cat > .secrets/secret.json <<EOF
-                  {
-                      "DJANGO_SECRET_KEY": "${{ secrets.DJANGO_SECRET_KEY }}",
-                      "NCLOUD_SERVER_IP": "${{ secrets.NCP_HOST }}"
-                  }
-                  EOF
             - name: Set up Docker buildx
               uses: docker/setup-buildx-action@v2
             - name: Login to NCR
@@ -61,7 +52,7 @@ jobs:
             - name: pull and run the image
               uses: appleboy/ssh-action@v1.0.0
               with:
-                  host: ${{ secrets.NCP_HOST }}
+                  host: ${{ secrets.NCP_STAGING_HOST }}
                   username: ${{ secrets.SSH_USERNAME }}
                   password: ${{ secrets.SSH_PASSWORD }}
                   script: |
@@ -72,7 +63,6 @@ jobs:
                       -u ${{ secrets.NCP_ACCESS_KEY_ID }} \
                       -p ${{ secrets.NCP_SECRET_ACCESS_KEY }}
                       docker pull ${{ env.IMAGE_TAG }}
-                      # docker-compose -f docker-compose_prod.yml up -d
                       docker stop ${{ env.CONTAINER_NAME }} && docker rm ${{ env.CONTAINER_NAME }}
                       docker run -p 8000:8000 -d -v ~/.aws:/root/.aws:ro \
                       --env-file .envs/prod/django --env-file .envs/prod/db --env-file .envs/prod/server \
