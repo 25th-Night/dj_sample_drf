@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECRET_KEY
-SECRET_KEY = 'django-insecure-2q-0(0c(%^+7_337#v*r&0ca=%ml#y=5)j!4q!=qxh&+d'
+SECRET_KEY = "django-insecure-2q-0(0c(%^+7_337#v*r&0ca=%ml#y=5)j!4q!=qxh&+d"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -33,7 +33,7 @@ ALLOWED_HOSTS = [
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    'http://127.0.0.1:8888',
+    "http://127.0.0.1:8888",
 ]
 
 
@@ -103,16 +103,13 @@ WSGI_APPLICATION = "config.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.getenv("POSTGRES_DB", 'postgres'),
-        "USER": os.getenv("POSTGRES_USER", 'postgres'),
-        "PASSWORD": os.getenv("POSTGRES_PASSWORD", 'postgres'),
-        "HOST": os.getenv("DB_HOST", 'postgres'),
-        "OPTIONS": {
-            "options": "-c search_path=likelion,public"
-        },
+        "NAME": os.getenv("POSTGRES_DB", "postgres"),
+        "USER": os.getenv("POSTGRES_USER", "postgres"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD", "postgres"),
+        "HOST": os.getenv("DB_HOST", "postgres"),
+        "OPTIONS": {"options": "-c search_path=likelion,public"},
     }
 }
-
 
 
 # Password validation
@@ -161,17 +158,17 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly",
     ],
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 # SPECTACULAR 설정
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'Your Project API',
-    'DESCRIPTION': 'Your project description',
-    'VERSION': '1.0.0',
-    'SERVE_INCLUDE_SCHEMA': False,
+    "TITLE": "Your Project API",
+    "DESCRIPTION": "Your project description",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
     # OTHER SETTINGS
 }

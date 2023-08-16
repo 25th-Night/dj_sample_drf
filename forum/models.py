@@ -13,6 +13,7 @@ class Topic(models.Model):
     def __str__(self):
         return self.name
 
+
 class Post(models.Model):
     topic = models.ForeignKey(Topic, on_delete=models.CASCADE, related_name="posts")
     title = models.TextField(max_length=200)

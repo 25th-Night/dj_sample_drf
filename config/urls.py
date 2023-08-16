@@ -19,7 +19,11 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
-from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
+from drf_spectacular.views import (
+    SpectacularAPIView,
+    SpectacularRedocView,
+    SpectacularSwaggerView,
+)
 
 from blog.urls import router as blog_router
 from forum.urls import router as forum_router
@@ -30,7 +34,15 @@ urlpatterns = [
     path("forum/", include(forum_router.urls)),
     path("api-auth/", include("rest_framework.urls")),
     # drf-spectacular
-    path('api/schema/', SpectacularAPIView.as_view(), name='api-schema'),
-    path('api/docs/', SpectacularSwaggerView.as_view(url_name='api-schema'), name='api-swagger-ui'),
-    path('api/redoc/', SpectacularRedocView.as_view(url_name='api-schema'), name='api-redoc'),
+    path("api/schema/", SpectacularAPIView.as_view(), name="api-schema"),
+    path(
+        "api/docs/",
+        SpectacularSwaggerView.as_view(url_name="api-schema"),
+        name="api-swagger-ui",
+    ),
+    path(
+        "api/redoc/",
+        SpectacularRedocView.as_view(url_name="api-schema"),
+        name="api-redoc",
+    ),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

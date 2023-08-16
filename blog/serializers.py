@@ -14,6 +14,6 @@ class BlogSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         return db.blogs.insert_one(validated_data)
-    
+
     def save(self, **kwargs):
         return

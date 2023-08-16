@@ -11,11 +11,17 @@ from .serializers import PostSerializer, TopicSerializer
 class TopicViewSet(viewsets.ModelViewSet):
     queryset = Topic.objects.all()
     serializer_class = TopicSerializer
-    
-    @extend_schema(parameters=[OpenApiParameter(name='name', description='Filter by name', required=False, type=str)])
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="name", description="Filter by name", required=False, type=str
+            )
+        ]
+    )
     def list(self, request, *args, **kwargs):
         queryset = Topic.objects.all()
-        name = request.query_params.get('name')
+        name = request.query_params.get("name")
 
         if name is not None:
             queryset = queryset.filter(name__icontains=name)
@@ -23,7 +29,6 @@ class TopicViewSet(viewsets.ModelViewSet):
         serialized_topic_data = self.serializer_class(queryset, many=True).data
         return Response(status=status.HTTP_200_OK, data=serialized_topic_data)
 
-    
     @extend_schema(summary="새 토픽 생성")
     def create(self, request, *args, **kwargs):
         return super().create(request, *args, **kwargs)
@@ -36,7 +41,7 @@ class PostViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = Post.objects.all()
-        topic_id = self.kwargs.get('topic_id')
+        topic_id = self.kwargs.get("topic_id")
 
         if topic_id:
             queryset = queryset.filter(topic_id=topic_id)

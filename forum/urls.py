@@ -12,9 +12,5 @@ router = DefaultRouter()
 #     basename='topic-posts'
 # )
 
-router.register('topics', TopicViewSet)
-router.register(
-    'topics/<int:topic_id>/posts',
-    PostViewSet,
-    basename='topic-posts'
-)
+router.register("topics", TopicViewSet)
+router.register("topics/<int:topic_id>/posts", PostViewSet, basename="topic-posts")
