@@ -23,24 +23,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECRET_KEY
-SECRET_DIR = BASE_DIR / ".secrets"
-secrets = json.load(open(os.path.join(SECRET_DIR, "secret.json")))
 SECRET_KEY = 'django-insecure-2q-0(0c(%^+7_337#v*r&0ca=%ml#y=5)j!4q!=qxh&+d'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    secrets["NCLOUD_SERVER_IP"], 
-    "lion-lb-18904314-4889fba25a98.kr.lb.naverncp.com",
-    os.getenv("LOAD_BALANCER_DOMAIN", 'localhost'),
-    "127.0.0.1"
+    "127.0.0.1",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    f'http://{secrets["NCLOUD_SERVER_IP"]}:8888', 
-    'http://lion-lb-18904314-4889fba25a98.kr.lb.naverncp.com',
-    f'http://{os.getenv("LOAD_BALANCER_DOMAIN", "localhost")}',
     'http://127.0.0.1:8888',
 ]
 
