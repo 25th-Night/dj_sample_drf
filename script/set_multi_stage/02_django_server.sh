@@ -107,12 +107,12 @@ EOF
 # install aws cli & configure aws credential
 echo "Install aws cli and Configure aws credential"
 sudo apt install -y awscli
-mkdir ~/.aws && \
+mkdir ~/.aws
 cat > ~/.aws/config <<EOF
 [default]
 region = ap-northeast-2
 output = JSON
-EOF && \
+EOF
 cat > ~/.aws/credentials <<EOF
 [default]
 aws_access_key_id = $AWS_ACCESS_KEY_ID
@@ -142,7 +142,7 @@ sudo docker pull $NCR_HOST/$DJANGO_IMAGE_TAG
 
 # run django container
 echo "Run Django Container"
-docker run -p 8000:8000 -d \
+sudo docker run -p 8000:8000 -d \
 -v /home/lion/.aws:/root/.aws:ro -v /home/lion/$DIRECTORY_NAME/.secrets/secret.json:/app/.secrets/secret.json:ro \
 --env-file .envs/prod/django --env-file .envs/prod/db --env-file .envs/prod/server \
 --name lion-app-dc $NCR_HOST/$DJANGO_IMAGE_TAG /start
