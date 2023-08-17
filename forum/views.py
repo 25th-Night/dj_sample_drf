@@ -3,6 +3,9 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter
 
 from rest_framework import viewsets, status
 from rest_framework.response import Response
+from rest_framework.request import Request
+from rest_framework.decorators import action
+
 
 from .models import Post, Topic, TopicGroupUser
 from .serializers import PostSerializer, TopicSerializer
@@ -15,10 +18,12 @@ class TopicViewSet(viewsets.ModelViewSet):
 
     @extend_schema(
         parameters=[
-            OpenApiParameter(name="name", description="Filter by name", required=False, type=str)
+            OpenApiParameter(
+                name="name", description="Filter by name", required=False, type=str
+            )
         ]
     )
-    def list(self, request, *args, **kwargs):
+    def list(self, request: Request, *args, **kwargs):
         queryset = Topic.objects.all()
         name = request.query_params.get("name")
 
@@ -29,24 +34,33 @@ class TopicViewSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_200_OK, data=serialized_topic_data)
 
     @extend_schema(summary="새 토픽 생성")
-    def create(self, request, *args, **kwargs):
+    def create(self, request: Request, *args, **kwargs):
         return super().create(request, *args, **kwargs)
+
+    @action(detail=True, methods=["get"], url_name="posts")
+    def posts(self, request: Request, *args, **kwargs):
+        topic: Topic = self.get_object()
+        user = request.user
+
+        if topic.is_private:
+            qs = TopicGroupUser.objects.filter(
+                group__lte=TopicGroupUser.GroupChoices.common, topic=topic, user=user
+            )
+            if not qs.exists():
+                return Response(
+                    status=status.HTTP_401_UNAUTHORIZED,
+                    data="This user is not allowed to write a post on this topic",
+                )
+
+        posts = topic.posts
+        serializer = PostSerializer(posts, many=True)
+        return Response(data=serializer.data)
 
 
 @extend_schema(tags=["Post"])
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-
-    # def list(self, request, *args, **kwargs):
-    #     queryset = Post.objects.all()
-    #     topic_id = request.query_params.get("topic_id")
-
-    #     if topic_id is not None:
-    #         queryset = queryset.filter(topic_id=topic_id)
-
-    #     serialized_post_data = self.serializer_class(queryset, many=True).data
-    #     return Response(status=status.HTTP_200_OK, data=serialized_post_data)
 
     def create(self, request, *args, **kwargs):
         user = request.user
@@ -69,6 +83,8 @@ class PostViewSet(viewsets.ModelViewSet):
             data = serializer.validated_data
             data["owner"] = user
             res: Post = serializer.create(data)
-            return Response(status=status.HTTP_201_CREATED, data=PostSerializer(res).data)
+            return Response(
+                status=status.HTTP_201_CREATED, data=PostSerializer(res).data
+            )
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
