@@ -55,7 +55,7 @@ class PostViewSet(viewsets.ModelViewSet):
         topic = get_object_or_404(Topic, id=topic_id)
         if topic.is_private:
             qs = TopicGroupUser.objects.filter(
-                group__lte=TopicGroupUser.groupChoices.common, topic=topic, user=user
+                group__lte=TopicGroupUser.GroupChoices.common, topic=topic, user=user
             )
             # SELECT * FROM TopicGroupUser WHERE topic=topic, user=user, (group=0 OR group=1)
             if not qs.exists():
@@ -63,12 +63,5 @@ class PostViewSet(viewsets.ModelViewSet):
                     status=status.HTTP_401_UNAUTHORIZED,
                     data="This user is not allowed to write a post on this topic",
                 )
-
-        # Topic - private
-        # User1 - Unauthorized
-        # User2 - Authorized
-
-        # User1 tried to write a post on Topic => fail. 401
-        # User2 tried to write a post on Topic => success. 201
 
         return super().create(request, *args, **kwargs)
