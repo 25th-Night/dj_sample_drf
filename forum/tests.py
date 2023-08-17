@@ -1,6 +1,7 @@
 import json
 
 from django.contrib.auth.models import User
+from django.db.models.query import QuerySet
 from django.http import HttpResponse
 from django.urls import reverse
 from rest_framework.test import APITestCase
@@ -11,15 +12,31 @@ from .models import Topic, Post, TopicGroupUser
 
 class PostTest(APITestCase):
     # Set up
-    # Topic - private
-    # User1 - Unauthorized
-    # User2 - Authorized
     @classmethod
     def setUpTestData(cls):
         cls.superuser = User.objects.create_superuser("superuser")
         cls.private_topic = Topic.objects.create(
             name="private_topic", is_private=True, owner=cls.superuser
         )
+        cls.public_topic = Topic.objects.create(
+            name="public_topic", is_private=False, owner=cls.superuser
+        )
+
+        for i in range(5):
+            Post.objects.create(
+                topic=cls.private_topic,
+                title=f"{i+1}",
+                content=f"{i+1}",
+                owner=cls.superuser,
+            )
+
+        for i in range(5):
+            Post.objects.create(
+                topic=cls.public_topic,
+                title=f"{i+1}",
+                content=f"{i+1}",
+                owner=cls.superuser,
+            )
 
         cls.authorized_user = User.objects.create_user("authorized")
         cls.unauthorized_user = User.objects.create_user("unauthorized")
@@ -48,3 +65,26 @@ class PostTest(APITestCase):
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
         data = json.loads(res.content)
         Post.objects.get(pk=res.data["id"])
+
+    def test_read_permission_on_topics(self):
+        # read public topic
+        # unauthorized user requests => 200. public topic's post
+        self.client.force_login(self.unauthorized_user)
+        res: HttpResponse = self.client.get(reverse("topic-posts", args=[self.public_topic.pk]))
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        data = json.loads(res.content)
+        posts_n = Post.objects.filter(topic=self.public_topic).count()
+        self.assertEqual(len(data), posts_n)
+
+        # read private topic
+        # unauthorized user requests => 401.
+        self.client.force_login(self.unauthorized_user)
+        res: HttpResponse = self.client.get(reverse("topic-posts", args=[self.private_topic.pk]))
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+        # authorized user requests => 200. public topic's post
+        self.client.force_login(self.authorized_user)
+        res: HttpResponse = self.client.get(reverse("topic-posts", args=[self.private_topic.pk]))
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        data = json.loads(res.content)
+        posts_n = Post.objects.filter(topic=self.private_topic).count()
+        self.assertEqual(len(data), posts_n)
