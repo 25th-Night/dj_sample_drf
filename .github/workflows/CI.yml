@@ -45,18 +45,27 @@ jobs:
             - name: Login to NCR
               uses: docker/login-action@v2
               with:
-                  registry: ${{ vars.NCR_HOST }}
-                  username: ${{ secrets.NCP_ACCESS_KEY_ID }}
-                  password: ${{ secrets.NCP_SECRET_ACCESS_KEY }}
+                registry: ${{ vars.NCR_HOST }}
+                username: ${{ secrets.NCP_ACCESS_KEY_ID }}
+                password: ${{ secrets.NCP_SECRET_ACCESS_KEY }}
 
             - name: Get current timestamp
               id: image-tag
               run: echo "TIMESTAMP=$(date "+%s")" >> "$GITHUB_OUTPUT"
 
-            - name: Build and Push
-              uses: docker/build-push-action@v4
-              with:
-                  context: .
-                  tags: ${{ env.IMAGE_TAG }},${{ env.IMAGE }}:${{ steps.image-tag.outputs.TIMESTAMP }}
-                  file: Dockerfile_django
-                  push: false
+            - name: Build
+              run: |
+                docker build -f Dockerfile_django -t test-lion:test .
+
+            - name: Run Test
+              run: |
+                docker run -d \
+                -e DJANGO_SETTINGS_MODULE=config.settings.test \
+                --name test \
+                test-lion:test python --version
+                docker exec test python manage.py test
+
+            - name: post test
+              if: ${{ always() }}
+              run: |
+                docker stop test && docker rm test && docker rmi test-lion:test
