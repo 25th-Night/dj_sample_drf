@@ -40,11 +40,18 @@ class PostTest(APITestCase):
 
         cls.authorized_user = User.objects.create_user("authorized")
         cls.unauthorized_user = User.objects.create_user("unauthorized")
+        cls.admin_user = User.objects.create_user("admin")
 
         TopicGroupUser.objects.create(
             topic=cls.private_topic,
             group=TopicGroupUser.GroupChoices.common,
             user=cls.authorized_user,
+        )
+
+        TopicGroupUser.objects.create(
+            topic=cls.private_topic,
+            group=TopicGroupUser.GroupChoices.admin,
+            user=cls.admin_user,
         )
 
     # Test
@@ -63,14 +70,30 @@ class PostTest(APITestCase):
         self.client.force_login(self.authorized_user)
         res: HttpResponse = self.client.post(reverse("post-list"), data=data)
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
-        data = json.loads(res.content)
-        Post.objects.get(pk=res.data["id"])
+        res_data = json.loads(res.content)
+        Post.objects.get(pk=res_data["id"])
+
+        # Admin
+        self.client.force_login(self.admin_user)
+        res: HttpResponse = self.client.post(reverse("post-list"), data=data)
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        res_data = json.loads(res.content)
+        Post.objects.get(pk=res_data["id"])
+
+        # Owner
+        self.client.force_login(self.superuser)
+        res: HttpResponse = self.client.post(reverse("post-list"), data=data)
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        res_data = json.loads(res.content)
+        Post.objects.get(pk=res_data["id"])
 
     def test_read_permission_on_topics(self):
         # read public topic
         # unauthorized user requests => 200. public topic's post
         self.client.force_login(self.unauthorized_user)
-        res: HttpResponse = self.client.get(reverse("topic-posts", args=[self.public_topic.pk]))
+        res: HttpResponse = self.client.get(
+            reverse("topic-posts", args=[self.public_topic.pk])
+        )
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         data = json.loads(res.content)
         posts_n = Post.objects.filter(topic=self.public_topic).count()
@@ -79,11 +102,15 @@ class PostTest(APITestCase):
         # read private topic
         # unauthorized user requests => 401.
         self.client.force_login(self.unauthorized_user)
-        res: HttpResponse = self.client.get(reverse("topic-posts", args=[self.private_topic.pk]))
+        res: HttpResponse = self.client.get(
+            reverse("topic-posts", args=[self.private_topic.pk])
+        )
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
         # authorized user requests => 200. public topic's post
         self.client.force_login(self.authorized_user)
-        res: HttpResponse = self.client.get(reverse("topic-posts", args=[self.private_topic.pk]))
+        res: HttpResponse = self.client.get(
+            reverse("topic-posts", args=[self.private_topic.pk])
+        )
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         data = json.loads(res.content)
         posts_n = Post.objects.filter(topic=self.private_topic).count()
