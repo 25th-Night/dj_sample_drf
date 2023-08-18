@@ -69,4 +69,4 @@ jobs:
             - name: post test
               if: ${{ always() }}
               run: |
-                docker-compose -f docker-compose_test.yml down
+                docker compose -f docker-compose_test.yml down
