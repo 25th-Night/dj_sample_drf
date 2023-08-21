@@ -122,5 +122,5 @@ output "ncloud_public_ip" {
 }
 
 output "server_ip" {
-  value = ncloud_server.test.pu
+  value = ncloud_server.test.public_ip
 }
