@@ -18,32 +18,32 @@ resource "ncloud_login_key" "loginkey" {
   key_name = "test-key"
 }
 
-resource "ncloud_vpc" "test" {
+resource "ncloud_vpc" "main" {
   ipv4_cidr_block = "10.1.0.0/16"
   name = "lion-tf"
 }
 
-resource "ncloud_subnet" "test" {
-  vpc_no         = ncloud_vpc.test.vpc_no
-  subnet         = cidrsubnet(ncloud_vpc.test.ipv4_cidr_block, 8, 1)
+resource "ncloud_subnet" "be" {
+  vpc_no         = ncloud_vpc.main.vpc_no
+  subnet         = cidrsubnet(ncloud_vpc.main.ipv4_cidr_block, 8, 1)
   zone           = "KR-2"
-  network_acl_no = ncloud_vpc.test.default_network_acl_no
+  network_acl_no = ncloud_vpc.main.default_network_acl_no
   subnet_type    = "PUBLIC"
   usage_type     = "GEN"
   name = "lion-tf-subnet"
 }
 
-resource "ncloud_server" "test" {
-  subnet_no                 = ncloud_subnet.test.id
-  name                      = "my-tf-server"
+resource "ncloud_server" "be" {
+  subnet_no                 = ncloud_subnet.be.id
+  name                      = "be-staging"
   server_image_product_code = "SW.VSVR.OS.LNX64.UBNTU.SVR2004.B050"
-  server_product_code = data.ncloud_server_products.products.server_products[0].product_code
+  server_product_code = data.ncloud_server_products.sm.server_products[0].product_code
   login_key_name            = ncloud_login_key.loginkey.key_name
-  init_script_no = ncloud_init_script.init.init_script_no
+  init_script_no = ncloud_init_script.main.init_script_no
 }
 
-resource "ncloud_init_script" "init" {
-  name    = "set-docker-tf"
+resource "ncloud_init_script" "main" {
+  name    = "set-server-tf"
   content = <<EOT
 #!/bin/bash
 
@@ -75,11 +75,11 @@ echo "done"
 EOT
 }
 
-resource "ncloud_public_ip" "test" {
-  server_instance_no = ncloud_server.test.instance_no
+resource "ncloud_public_ip" "be" {
+  server_instance_no = ncloud_server.be.instance_no
 }
 
-data "ncloud_server_products" "products" {
+data "ncloud_server_products" "sm" {
   server_image_product_code = "SW.VSVR.OS.LNX64.UBNTU.SVR2004.B050"
   filter {
     name   = "product_code"
@@ -112,15 +112,30 @@ data "ncloud_server_products" "products" {
 
 output "products" {
   value = {
-    for product in data.ncloud_server_products.products.server_products:
+    for product in data.ncloud_server_products.sm.server_products:
     product.id => product.product_name
   }
 }
 
-output "ncloud_public_ip" {
-  value = ncloud_public_ip.test.public_ip
+output "be_public_ip" {
+  value = ncloud_public_ip.be.public_ip
 }
 
-output "server_ip" {
-  value = ncloud_server.test.public_ip
+## db
+
+resource "ncloud_server" "db" {
+  subnet_no                 = ncloud_subnet.be.id
+  name                      = "db-staging"
+  server_image_product_code = "SW.VSVR.OS.LNX64.UBNTU.SVR2004.B050"
+  server_product_code = data.ncloud_server_products.sm.server_products[0].product_code
+  login_key_name            = ncloud_login_key.loginkey.key_name
+  init_script_no = ncloud_init_script.main.init_script_no
+}
+
+resource "ncloud_public_ip" "db" {
+  server_instance_no = ncloud_server.db.instance_no
+}
+
+output "db_public_ip" {
+  value = ncloud_public_ip.db.public_ip
 }
