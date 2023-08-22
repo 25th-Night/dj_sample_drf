@@ -81,7 +81,7 @@ resource "ncloud_server" "be" {
 
 resource "ncloud_init_script" "main" {
   name    = "set-server-tf"
-  content = templatefile("${path.module}"/main_init_script.tftpl, {
+  content = templatefile("${path.module}/main_init_script.tftpl", {
     password = var.password
   })
 }
