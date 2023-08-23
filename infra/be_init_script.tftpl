@@ -1,0 +1,60 @@
+#!/bin/bash
+
+USERNAME="${USERNAME}"
+PASSWORD="${PASSWORD}"
+REMOTE_DIRECTORY="/home/$USERNAME/"
+DJANGO_SETTINGS_MODULE="${DJANGO_SETTINGS_MODULE}"
+DJANGO_SECRET_KEY="${DJANGO_SECRET_KEY}"
+DJANGO_CONTIANER_NAME="${DJANGO_CONTIANER_NAME}"
+DJANGO_HOST="${DJANGO_HOST}"
+NCR_HOST="${NCR_HOST}"
+NCR_IMAGE="${NCR_IMAGE}"
+NCP_ACCESS_KEY="${NCP_ACCESS_KEY}"
+NCP_SECRET_KEY="${NCP_SECRET_KEY}"
+NCP_LB_DOMAIN="${NCP_LB_DOMAIN}"
+POSTGRES_DB="${POSTGRES_DB}"
+POSTGRES_USER="${POSTGRES_USER}"
+POSTGRES_PASSWORD="${POSTGRES_PASSWORD}"
+POSTGRES_PORT="${POSTGRES_PORT}"
+DB_HOST="${DB_HOST}"
+ENV_PATH=/home/$USERNAME/.env
+
+echo "Add user"
+useradd -s /bin/bash -d $REMOTE_DIRECTORY -m $USERNAME
+
+echo "Set password"
+echo "$USERNAME:$PASSWORD" | chpasswd
+
+echo "Set sudo"
+usermod -aG sudo $USERNAME
+echo "$USERNAME ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers.d/$USERNAME
+
+echo "Update apt and Install docker & docker-compose"
+sudo apt-get update
+sudo apt install -y docker.io docker-compose
+
+echo "Start docker"
+sudo service docker start && sudo service docker enable
+
+echo "Add user to 'docker' group"
+sudo usermod -aG docker $USERNAME
+
+echo "Create .env file"
+touch $ENV_PATH
+echo 'DJANGO_SETTINGS_MODULE="${DJANGO_SETTINGS_MODULE}"' >> $ENV_PATH
+echo 'DJANGO_SECRET_KEY="${DJANGO_SECRET_KEY}"' >> $ENV_PATH
+echo 'DJANGO_CONTIANER_NAME="${DJANGO_CONTIANER_NAME}"' >> $ENV_PATH
+echo 'DJANGO_HOST="${DJANGO_HOST}"' >> $ENV_PATH
+echo 'NCR_HOST="${NCR_HOST}"' >> $ENV_PATH
+echo 'NCR_IMAGE="${NCR_IMAGE}"' >> $ENV_PATH
+echo 'NCP_ACCESS_KEY="${NCP_ACCESS_KEY}"' >> $ENV_PATH
+echo 'NCP_SECRET_KEY="${NCP_SECRET_KEY}"' >> $ENV_PATH
+echo 'NCP_SECRET_KEY="${NCP_SECRET_KEY}"' >> $ENV_PATH
+echo 'NCP_LB_DOMAIN="${NCP_LB_DOMAIN}"' >> $ENV_PATH
+echo 'POSTGRES_DB="${POSTGRES_DB}"' >> $ENV_PATH
+echo 'POSTGRES_USER="${POSTGRES_USER}"' >> $ENV_PATH
+echo 'POSTGRES_PASSWORD="${POSTGRES_PASSWORD}"' >> $ENV_PATH
+echo 'POSTGRES_PORT="${POSTGRES_PORT}"' >> $ENV_PATH
+echo 'DB_HOST="${DB_HOST}"' >> $ENV_PATH
+
+echo "done"

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-env_file=/home/lion/.env-staging
+env_file=/home/lion/.env
 
 # 1. Fetch Environment Variables
 echo "Fetch Environment Variables"
