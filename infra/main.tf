@@ -16,16 +16,76 @@ provider "ncloud" {
   support_vpc = true
 }
 
+variable "PASSWORD" {
+  type = string
+  sensitive = true
+}
+
+variable "USERNAME" {
+  type = string
+  sensitive = true
+}
+
+variable "DJANGO_SETTINGS_MODULE" {
+  type = string
+}
+
+variable "DJANGO_SECRET_KEY" {
+  type = string
+}
+
+variable "DJANGO_CONTIANER_NAME" {
+  type = string
+}
+
+variable "DJANGO_HOST" {
+  type = string
+}
+
+variable "NCR_HOST" {
+  type = string
+}
+
+variable "NCR_IMAGE" {
+  type = string
+}
+
 variable "NCP_ACCESS_KEY" {
   type = string
 }
 
 variable "NCP_SECRET_KEY" {
   type = string
+}
+
+variable "NCP_LB_DOMAIN" {
+  type = string
+}
+
+variable "POSTGRES_DB" {
+  type = string
+}
+
+variable "POSTGRES_USER" {
+  type = string
   sensitive = true
 }
 
-variable "password" {
+variable "POSTGRES_PASSWORD" {
+  type = string
+}
+
+variable "POSTGRES_PORT" {
+  type = number
+  sensitive = true
+}
+
+variable "POSTGRES_VOLUME" {
+  type = string
+  sensitive = true
+}
+
+variable "DB_CONTAINER_NAME" {
   type = string
   sensitive = true
 }
@@ -84,17 +144,32 @@ resource "ncloud_server" "be" {
   server_image_product_code = "SW.VSVR.OS.LNX64.UBNTU.SVR2004.B050"
   server_product_code = data.ncloud_server_products.sm.server_products[0].product_code
   login_key_name            = ncloud_login_key.loginkey.key_name
-  init_script_no = ncloud_init_script.main.init_script_no
+  init_script_no = ncloud_init_script.be.init_script_no
   network_interface {
     network_interface_no = ncloud_network_interface.be.id
     order = 0
   }
 }
 
-resource "ncloud_init_script" "main" {
-  name    = "set-server-tf"
-  content = templatefile("${path.module}/main_init_script.tftpl", {
-    password = var.password
+resource "ncloud_init_script" "be" {
+  name    = "set-be-tf"
+  content = templatefile("${path.module}/be_init_script.tftpl", {
+    PASSWORD = var.PASSWORD
+    USERNAME = var.USERNAME
+    DJANGO_SETTINGS_MODULE = var.DJANGO_SETTINGS_MODULE
+    DJANGO_SECRET_KEY = var.DJANGO_SECRET_KEY
+    DJANGO_CONTIANER_NAME = var.DJANGO_CONTIANER_NAME
+    DJANGO_HOST = var.DJANGO_HOST
+    NCR_HOST = var.NCR_HOST
+    NCR_IMAGE = var.NCR_IMAGE
+    NCP_ACCESS_KEY = var.NCP_ACCESS_KEY
+    NCP_SECRET_KEY = var.NCP_SECRET_KEY
+    NCP_LB_DOMAIN = var.NCP_LB_DOMAIN
+    POSTGRES_DB = var.POSTGRES_DB
+    POSTGRES_USER = var.POSTGRES_USER
+    POSTGRES_PASSWORD = var.POSTGRES_PASSWORD
+    POSTGRES_PORT = var.POSTGRES_PORT
+    DB_HOST = ncloud_public_ip.db.public_ip
   })
 }
 
@@ -140,10 +215,6 @@ output "products" {
   }
 }
 
-output "be_public_ip" {
-  value = ncloud_public_ip.be.public_ip
-}
-
 ## db
 
 resource "ncloud_access_control_group" "db-acg" {
@@ -177,19 +248,29 @@ resource "ncloud_server" "db" {
   server_image_product_code = "SW.VSVR.OS.LNX64.UBNTU.SVR2004.B050"
   server_product_code = data.ncloud_server_products.sm.server_products[0].product_code
   login_key_name            = ncloud_login_key.loginkey.key_name
-  init_script_no = ncloud_init_script.main.init_script_no
+  init_script_no = ncloud_init_script.db.init_script_no
   network_interface {
     network_interface_no = ncloud_network_interface.db.id
     order = 0
   }
 }
 
-resource "ncloud_public_ip" "db" {
-  server_instance_no = ncloud_server.db.instance_no
+resource "ncloud_init_script" "db" {
+  name    = "set-db-tf"
+  content = templatefile("${path.module}/db_init_script.tftpl", {
+    USERNAME = var.USERNAME
+    PASSWORD = var.PASSWORD
+    POSTGRES_DB = var.POSTGRES_DB
+    POSTGRES_USER = var.POSTGRES_USER
+    POSTGRES_PASSWORD = var.POSTGRES_PASSWORD
+    POSTGRES_PORT = var.POSTGRES_PORT
+    POSTGRES_VOLUME = var.POSTGRES_VOLUME
+    DB_CONTAINER_NAME = var.DB_CONTAINER_NAME
+  })
 }
 
-output "db_public_ip" {
-  value = ncloud_public_ip.db.public_ip
+resource "ncloud_public_ip" "db" {
+  server_instance_no = ncloud_server.db.instance_no
 }
 
 resource "ncloud_subnet" "be-lb" {
@@ -239,6 +320,14 @@ resource "ncloud_lb_target_group_attachment" "be-attachment" {
   target_no_list = [ncloud_server.be.instance_no]
 }
 
+
+output "be_public_ip" {
+  value = ncloud_public_ip.be.public_ip
+}
+
+output "db_public_ip" {
+  value = ncloud_public_ip.db.public_ip
+}
 
 output "be-staging-lb" {
   value = ncloud_lb.be-staging.domain
