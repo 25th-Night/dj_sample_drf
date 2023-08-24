@@ -54,8 +54,8 @@ variable "POSTGRES_PASSWORD" {
 }
 
 variable "POSTGRES_PORT" {
-  type      = number
-  sensitive = true
+  type    = number
+  default = 5432
 }
 
 variable "POSTGRES_VOLUME" {
