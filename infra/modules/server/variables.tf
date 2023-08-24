@@ -72,3 +72,7 @@ variable "DB_CONTAINER_NAME" {
 variable "env" {
   type = string
 }
+
+variable "vpc_id" {
+  type = number
+}

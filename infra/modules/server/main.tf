@@ -16,16 +16,15 @@ provider "ncloud" {
   support_vpc = true
 }
 
-resource "ncloud_vpc" "main" {
-  ipv4_cidr_block = "10.1.0.0/16"
-  name            = "vpc-${var.env}"
+data "ncloud_vpc" "main" {
+  id = var.vpc_id
 }
 
 resource "ncloud_subnet" "main" {
-  vpc_no         = ncloud_vpc.main.vpc_no
-  subnet         = cidrsubnet(ncloud_vpc.main.ipv4_cidr_block, 8, 1)
+  vpc_no         = data.ncloud_vpc.main.vpc_no
+  subnet         = cidrsubnet(data.ncloud_vpc.main.ipv4_cidr_block, 8, 1)
   zone           = "KR-2"
-  network_acl_no = ncloud_vpc.main.default_network_acl_no
+  network_acl_no = data.ncloud_vpc.main.default_network_acl_no
   subnet_type    = "PUBLIC"
   usage_type     = "GEN"
   name           = "server-subnet-${var.env}"
@@ -71,7 +70,7 @@ data "ncloud_server_products" "sm" {
 
 resource "ncloud_access_control_group" "be_acg" {
   name   = "be-acg-${var.env}"
-  vpc_no = ncloud_vpc.main.id
+  vpc_no = data.ncloud_vpc.main.vpc_no
 }
 
 resource "ncloud_access_control_group_rule" "be_acg_rule" {
@@ -89,7 +88,7 @@ resource "ncloud_network_interface" "be" {
   name      = "be-nic-${var.env}"
   subnet_no = ncloud_subnet.main.id
   access_control_groups = [
-    ncloud_vpc.main.default_access_control_group_no,
+    data.ncloud_vpc.main.default_access_control_group_no,
     ncloud_access_control_group.be_acg.id
   ]
 }
@@ -137,7 +136,7 @@ resource "ncloud_public_ip" "be" {
 
 resource "ncloud_access_control_group" "db_acg" {
   name   = "db-acg-${var.env}"
-  vpc_no = ncloud_vpc.main.id
+  vpc_no = data.ncloud_vpc.main.vpc_no
 }
 
 resource "ncloud_access_control_group_rule" "db_acg_rule" {
@@ -155,7 +154,7 @@ resource "ncloud_network_interface" "db" {
   name      = "db-nic-${var.env}"
   subnet_no = ncloud_subnet.main.id
   access_control_groups = [
-    ncloud_vpc.main.default_access_control_group_no,
+    data.ncloud_vpc.main.default_access_control_group_no,
     ncloud_access_control_group.db_acg.id
   ]
 }
