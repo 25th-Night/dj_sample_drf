@@ -22,17 +22,26 @@ resource "aws_vpc" "example" {
 }
 
 
-resource "aws_iam_user" "test" {
-  name = "tester"
+resource "aws_iam_user" "dev" {
+  for_each = toset([ "monkey", "hippo", "horse" ])
+  name = each.key
+  path = "/dev/"
 }
 
-resource "aws_iam_user_login_profile" "example" {
-  user    = aws_iam_user.test.name
+# resource "aws_iam_user_login_profile" "example" {
+#   user    = aws_iam_user.test.name
+# }
+
+
+resource "aws_iam_access_key" "dev" {
+  for_each = aws_iam_user.dev
+  user = each.value.name
 }
 
-
-resource "aws_iam_access_key" "lb" {
-  user = aws_iam_user.test.name
+output "IAM_ACCESS_KEY" {
+  value = {
+    for k, v in aws_iam_access_key.dev : k => v.id
+  }
 }
 
 data "aws_iam_policy_document" "iam" {
@@ -43,13 +52,24 @@ data "aws_iam_policy_document" "iam" {
   }
 }
 
-resource "aws_iam_user_policy" "lb_ro" {
-  name   = "test"
-  user   = aws_iam_user.test.name
-  policy = data.aws_iam_policy_document.iam.json
-}
+# resource "aws_iam_user_policy" "lb_ro" {
+#   name   = "test"
+#   user   = aws_iam_user.test.name
+#   policy = data.aws_iam_policy_document.iam.json
+# }
 
-output "password" {
-  value = aws_iam_user_login_profile.example.password
-  sensitive = true
+# output "password" {
+#   value = aws_iam_user_login_profile.example.password
+#   sensitive = true
+# }
+
+# resource "local_file" "users" {
+#   content  = "${aws_iam_user_login_profile.example.password}"
+#   filename = "${path.module}/users.txt"
+# }
+
+data "aws_iam_account_alias" "current" {}
+
+output "account_id" {
+  value = data.aws_iam_account_alias.current.account_alias
 }
