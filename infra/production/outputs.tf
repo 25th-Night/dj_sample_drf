@@ -1,15 +1,11 @@
-# output "product" {
-#   value = data.ncloud_server_product.prod_server_product.id
-# }
+output "be_public_ip" {
+  value = module.servers.be_public_ip
+}
 
-# output "prod_be_public_ip" {
-#   value = ncloud_public_ip.prod_be_public_ip.public_ip
-# }
+output "be_staging_lb" {
+  value = module.servers.db_public_ip
+}
 
-# output "prod_db_public_ip" {
-#   value = ncloud_public_ip.prod_db_public_ip.public_ip
-# }
-
-# output "prod_be_lb" {
-#   value = ncloud_lb.prod_be_lb.domain
+# output "be_staging_lb" {
+#   value = ncloud_lb.be_staging.domain
 # }
