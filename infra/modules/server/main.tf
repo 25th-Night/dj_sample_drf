@@ -62,7 +62,7 @@ data "ncloud_server_products" "sm" {
     values = ["HICPU"]
   }
 
-  output_file = "product.json"
+  #   output_file = "product.json"
 }
 
 
