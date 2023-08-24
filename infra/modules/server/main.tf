@@ -18,7 +18,7 @@ provider "ncloud" {
 
 resource "ncloud_vpc" "main" {
   ipv4_cidr_block = "10.1.0.0/16"
-  name            = "staging-vpc"
+  name            = "vpc-${var.env}"
 }
 
 resource "ncloud_subnet" "main" {
@@ -28,11 +28,11 @@ resource "ncloud_subnet" "main" {
   network_acl_no = ncloud_vpc.main.default_network_acl_no
   subnet_type    = "PUBLIC"
   usage_type     = "GEN"
-  name           = "be-server-subnet"
+  name           = "server-subnet-${var.env}"
 }
 
 resource "ncloud_login_key" "loginkey" {
-  key_name = "staging-key"
+  key_name = "login-key-${var.env}"
 }
 
 data "ncloud_server_products" "sm" {
@@ -70,7 +70,7 @@ data "ncloud_server_products" "sm" {
 # be
 
 resource "ncloud_access_control_group" "be_acg" {
-  name   = "be-staging"
+  name   = "be-acg-${var.env}"
   vpc_no = ncloud_vpc.main.id
 }
 
@@ -86,7 +86,7 @@ resource "ncloud_access_control_group_rule" "be_acg_rule" {
 }
 
 resource "ncloud_network_interface" "be" {
-  name      = "be-nic"
+  name      = "be-nic-${var.env}"
   subnet_no = ncloud_subnet.main.id
   access_control_groups = [
     ncloud_vpc.main.default_access_control_group_no,
@@ -95,7 +95,7 @@ resource "ncloud_network_interface" "be" {
 }
 
 resource "ncloud_init_script" "be" {
-  name = "staging-be-init"
+  name = "be-init-${var.env}"
   content = templatefile("${path.module}/be_init_script.tftpl", {
     USERNAME               = var.USERNAME
     PASSWORD               = var.PASSWORD
@@ -117,7 +117,7 @@ resource "ncloud_init_script" "be" {
 
 resource "ncloud_server" "be" {
   subnet_no                 = ncloud_subnet.main.id
-  name                      = "be-staging"
+  name                      = "be-${var.env}"
   server_image_product_code = "SW.VSVR.OS.LNX64.UBNTU.SVR2004.B050"
   server_product_code       = data.ncloud_server_products.sm.server_products[0].product_code
   login_key_name            = ncloud_login_key.loginkey.key_name
@@ -136,7 +136,7 @@ resource "ncloud_public_ip" "be" {
 ## db
 
 resource "ncloud_access_control_group" "db_acg" {
-  name   = "db-staging"
+  name   = "db-acg-${var.env}"
   vpc_no = ncloud_vpc.main.id
 }
 
@@ -152,7 +152,7 @@ resource "ncloud_access_control_group_rule" "db_acg_rule" {
 }
 
 resource "ncloud_network_interface" "db" {
-  name      = "db-nic"
+  name      = "db-nic-${var.env}"
   subnet_no = ncloud_subnet.main.id
   access_control_groups = [
     ncloud_vpc.main.default_access_control_group_no,
@@ -161,7 +161,7 @@ resource "ncloud_network_interface" "db" {
 }
 
 resource "ncloud_init_script" "db" {
-  name = "staging-db-init"
+  name = "db-init-${var.env}"
   content = templatefile("${path.module}/db_init_script.tftpl", {
     USERNAME          = var.USERNAME
     PASSWORD          = var.PASSWORD
@@ -177,7 +177,7 @@ resource "ncloud_init_script" "db" {
 
 resource "ncloud_server" "db" {
   subnet_no                 = ncloud_subnet.main.id
-  name                      = "db-staging"
+  name                      = "db-${var.env}"
   server_image_product_code = "SW.VSVR.OS.LNX64.UBNTU.SVR2004.B050"
   server_product_code       = data.ncloud_server_products.sm.server_products[0].product_code
   login_key_name            = ncloud_login_key.loginkey.key_name

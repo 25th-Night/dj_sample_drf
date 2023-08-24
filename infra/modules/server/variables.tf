@@ -68,3 +68,7 @@ variable "POSTGRES_VOLUME" {
 variable "DB_CONTAINER_NAME" {
   type = string
 }
+
+variable "env" {
+  type = string
+}
