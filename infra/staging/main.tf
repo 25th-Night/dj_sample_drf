@@ -16,14 +16,17 @@ provider "ncloud" {
   support_vpc = true
 }
 
+locals {
+  stage = "staging"
+}
+
 module "vpc" {
   source = "../modules/network"
 
   NCP_ACCESS_KEY = var.NCP_ACCESS_KEY
   NCP_SECRET_KEY = var.NCP_SECRET_KEY
-  env            = "staging"
+  env            = local.stage
 }
-
 
 module "servers" {
   source = "../modules/server"
@@ -44,6 +47,17 @@ module "servers" {
   POSTGRES_PORT          = var.POSTGRES_PORT
   POSTGRES_VOLUME        = var.POSTGRES_VOLUME
   DB_CONTAINER_NAME      = var.DB_CONTAINER_NAME
-  env                    = "staging"
+  env                    = local.stage
   vpc_id                 = module.vpc.vpc_id
 }
+
+module "load_balancer" {
+  source = "../modules/loadBalancer"
+
+  NCP_ACCESS_KEY        = var.NCP_ACCESS_KEY
+  NCP_SECRET_KEY        = var.NCP_SECRET_KEY
+  env                   = local.stage
+  vpc_id                = module.vpc.vpc_id
+  be_server_instance_no = module.servers.be_server_instance_no
+}
+
