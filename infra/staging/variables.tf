@@ -1,9 +1,9 @@
-variable "PASSWORD" {
+variable "USERNAME" {
   type      = string
   sensitive = true
 }
 
-variable "USERNAME" {
+variable "PASSWORD" {
   type      = string
   sensitive = true
 }
@@ -13,7 +13,8 @@ variable "DJANGO_SETTINGS_MODULE" {
 }
 
 variable "DJANGO_SECRET_KEY" {
-  type = string
+  type      = string
+  sensitive = true
 }
 
 variable "DJANGO_CONTIANER_NAME" {
@@ -21,7 +22,8 @@ variable "DJANGO_CONTIANER_NAME" {
 }
 
 variable "NCR_HOST" {
-  type = string
+  type      = string
+  sensitive = true
 }
 
 variable "NCR_IMAGE" {
@@ -29,19 +31,23 @@ variable "NCR_IMAGE" {
 }
 
 variable "NCP_ACCESS_KEY" {
-  type = string
+  type      = string
+  sensitive = true
 }
 
 variable "NCP_SECRET_KEY" {
-  type = string
+  type      = string
+  sensitive = true
 }
 
 variable "NCP_LB_DOMAIN" {
-  type = string
+  type      = string
+  sensitive = true
 }
 
 variable "POSTGRES_DB" {
-  type = string
+  type      = string
+  sensitive = true
 }
 
 variable "POSTGRES_USER" {
@@ -50,7 +56,8 @@ variable "POSTGRES_USER" {
 }
 
 variable "POSTGRES_PASSWORD" {
-  type = string
+  type      = string
+  sensitive = true
 }
 
 variable "POSTGRES_PORT" {
@@ -59,11 +66,9 @@ variable "POSTGRES_PORT" {
 }
 
 variable "POSTGRES_VOLUME" {
-  type      = string
-  sensitive = true
+  type = string
 }
 
 variable "DB_CONTAINER_NAME" {
-  type      = string
-  sensitive = true
+  type = string
 }
