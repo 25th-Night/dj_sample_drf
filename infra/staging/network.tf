@@ -1,6 +1,6 @@
 resource "ncloud_vpc" "main" {
   ipv4_cidr_block = "10.1.0.0/16"
-  name = "lion-tf"
+  name            = "staging-vpc"
 }
 
 resource "ncloud_subnet" "main" {
@@ -10,10 +10,10 @@ resource "ncloud_subnet" "main" {
   network_acl_no = ncloud_vpc.main.default_network_acl_no
   subnet_type    = "PUBLIC"
   usage_type     = "GEN"
-  name = "lion-tf-subnet"
+  name           = "be-server-subnet"
 }
 
-resource "ncloud_subnet" "be-lb" {
+resource "ncloud_subnet" "be_lb" {
   vpc_no         = ncloud_vpc.main.id
   subnet         = cidrsubnet(ncloud_vpc.main.ipv4_cidr_block, 8, 2)
   zone           = "KR-2"

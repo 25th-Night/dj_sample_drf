@@ -1,10 +1,10 @@
 variable "PASSWORD" {
-  type = string
+  type      = string
   sensitive = true
 }
 
 variable "USERNAME" {
-  type = string
+  type      = string
   sensitive = true
 }
 
@@ -17,10 +17,6 @@ variable "DJANGO_SECRET_KEY" {
 }
 
 variable "DJANGO_CONTIANER_NAME" {
-  type = string
-}
-
-variable "DJANGO_HOST" {
   type = string
 }
 
@@ -49,7 +45,7 @@ variable "POSTGRES_DB" {
 }
 
 variable "POSTGRES_USER" {
-  type = string
+  type      = string
   sensitive = true
 }
 
@@ -58,16 +54,16 @@ variable "POSTGRES_PASSWORD" {
 }
 
 variable "POSTGRES_PORT" {
-  type = number
+  type      = number
   sensitive = true
 }
 
 variable "POSTGRES_VOLUME" {
-  type = string
+  type      = string
   sensitive = true
 }
 
 variable "DB_CONTAINER_NAME" {
-  type = string
+  type      = string
   sensitive = true
 }
