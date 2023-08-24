@@ -16,6 +16,13 @@ provider "ncloud" {
   support_vpc = true
 }
 
+module "vpc" {
+  source = "../modules/network"
+
+  NCP_ACCESS_KEY = var.NCP_ACCESS_KEY
+  NCP_SECRET_KEY = var.NCP_SECRET_KEY
+  env            = "prod"
+}
 
 module "servers" {
   source = "../modules/server"
@@ -37,4 +44,5 @@ module "servers" {
   POSTGRES_VOLUME        = var.POSTGRES_VOLUME
   DB_CONTAINER_NAME      = var.DB_CONTAINER_NAME
   env                    = "prod"
+  vpc_id                 = module.vpc.vpc_id
 }
