@@ -1,9 +1,9 @@
-variable "NCP_ACCESS_KEY" {
+variable "ncp_access_key" {
   type      = string
   sensitive = true
 }
 
-variable "NCP_SECRET_KEY" {
+variable "ncp_secret_key" {
   type      = string
   sensitive = true
 }

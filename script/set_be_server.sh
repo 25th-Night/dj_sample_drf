@@ -22,6 +22,6 @@ docker pull ${NCR_HOST}/${NCR_IMAGE}
 echo "Run Django Image"
 sudo docker run -d \
 -p 8000:8000 \
---name ${DJANGO_CONTIANER_NAME} \
+--name ${DJANGO_CONTAINER_NAME} \
 --env-file $env_file \
 ${NCR_HOST}/${NCR_IMAGE}

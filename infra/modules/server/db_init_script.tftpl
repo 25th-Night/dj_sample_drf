@@ -1,14 +1,16 @@
 #!/bin/bash
 
-USERNAME="${USERNAME}"
-PASSWORD="${PASSWORD}"
+USERNAME="${username}"
+PASSWORD="${password}"
+POSTGRES_DB="${postgres_db}"
+POSTGRES_USER="${postgres_user}"
+POSTGRES_PASSWORD="${postgres_password}"
+POSTGRES_PORT="${postgres_port}"
+POSTGRES_VOLUME="${postgres_volume}"
+CONTAINER_NAME="${db_container_name}"
+
+
 REMOTE_DIRECTORY="/home/$USERNAME/"
-POSTGRES_DB="${POSTGRES_DB}"
-POSTGRES_USER="${POSTGRES_USER}"
-POSTGRES_PASSWORD="${POSTGRES_PASSWORD}"
-POSTGRES_PORT="${POSTGRES_PORT}"
-POSTGRES_VOLUME="${POSTGRES_VOLUME}"
-DB_CONTAINER_NAME="${DB_CONTAINER_NAME}"
 ENV_PATH=/home/$USERNAME/.env
 BASH_ALIASES=/home/$USERNAME/.bash_aliases
 BASHRC=/home/$USERNAME/.bashrc
@@ -36,27 +38,28 @@ sudo usermod -aG docker $USERNAME
 
 echo "Create .env file"
 touch $ENV_PATH
-echo "POSTGRES_DB=${POSTGRES_DB}" >> $ENV_PATH
-echo "POSTGRES_USER=${POSTGRES_USER}" >> $ENV_PATH
-echo "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}" >> $ENV_PATH
-echo "POSTGRES_PORT=${POSTGRES_PORT}" >> $ENV_PATH
-echo "POSTGRES_VOLUME=${POSTGRES_VOLUME}" >> $ENV_PATH
-echo "DB_CONTAINER_NAME=${DB_CONTAINER_NAME}" >> $ENV_PATH
+echo "POSTGRES_DB=$POSTGRES_DB" >> $ENV_PATH
+echo "POSTGRES_USER=$POSTGRES_USER" >> $ENV_PATH
+echo "POSTGRES_PASSWORD=$POSTGRES_PASSWORD" >> $ENV_PATH
+echo "POSTGRES_PORT=$POSTGRES_PORT" >> $ENV_PATH
+echo "POSTGRES_VOLUME=$POSTGRES_VOLUME" >> $ENV_PATH
+echo "DB_CONTAINER_NAME=$CONTAINER_NAME" >> $ENV_PATH
 
 
 echo "Set alias to \"$BASH_ALIASES\" file"
 touch $BASH_ALIASES
-echo "alias dpsls=\"docker ps && docker logs $DB_CONTAINER_NAME\"" >> $BASH_ALIASES
+echo "alias dpsls=\"docker ps && docker logs $CONTAINER_NAME\"" >> $BASH_ALIASES
 echo "alias dps=\"docker ps\"" >> $BASH_ALIASES
 echo "alias dpsa=\"docker ps -a\"" >> $BASH_ALIASES
 echo "alias dimg=\"docker image\"" >> $BASH_ALIASES
 echo "alias dimgs=\"docker images\"" >> $BASH_ALIASES
 echo "alias drst=\"docker restart\"" >> $BASH_ALIASES
 echo "alias dlog=\"docker logs\"" >> $BASH_ALIASES
-echo "alias dexc=\"docker exec $DB_CONTAINER_NAME\"" >> $BASH_ALIASES
-echo "alias dexib=\"docker exec -it $DB_CONTAINER_NAME bash\"" >> $BASH_ALIASES
-echo "alias dstrm=\"docker stop $DB_CONTAINER_NAME && docker rm $DB_CONTAINER_NAME\"" >> $BASH_ALIASES
-echo "alias dpsql=\"docker exec -it $DB_CONTAINER_NAME -U $POSTGRES_USER -d $POSTGRES_DB\"" >> $BASH_ALIASES
+echo "alias dexc=\"docker exec $CONTAINER_NAME\"" >> $BASH_ALIASES
+echo "alias dexib=\"docker exec -it $CONTAINER_NAME bash\"" >> $BASH_ALIASES
+echo "alias dstrm=\"docker stop $CONTAINER_NAME && docker rm $CONTAINER_NAME\"" >> $BASH_ALIASES
+echo "alias dpsql=\"docker exec -it $CONTAINER_NAME -U $POSTGRES_USER -d $POSTGRES_DB\"" >> $BASH_ALIASES
+
 echo "if [ -f ~/.env ]; then" >> $BASHRC
 echo "    . ~/.env" >> $BASHRC
 echo "fi" >> $BASHRC

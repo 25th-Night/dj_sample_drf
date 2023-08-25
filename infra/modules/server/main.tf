@@ -9,8 +9,8 @@ terraform {
 
 // Configure the ncloud provider
 provider "ncloud" {
-  access_key  = var.NCP_ACCESS_KEY
-  secret_key  = var.NCP_SECRET_KEY
+  access_key  = var.ncp_access_key
+  secret_key  = var.ncp_secret_key
   region      = "KR"
   site        = "public"
   support_vpc = true
@@ -96,21 +96,21 @@ resource "ncloud_network_interface" "be" {
 resource "ncloud_init_script" "be" {
   name = "be-init-${var.env}"
   content = templatefile("${path.module}/be_init_script.tftpl", {
-    USERNAME               = var.USERNAME
-    PASSWORD               = var.PASSWORD
-    DJANGO_SETTINGS_MODULE = var.DJANGO_SETTINGS_MODULE
-    DJANGO_SECRET_KEY      = var.DJANGO_SECRET_KEY
-    DJANGO_CONTIANER_NAME  = var.DJANGO_CONTIANER_NAME
-    NCR_HOST               = var.NCR_HOST
-    NCR_IMAGE              = var.NCR_IMAGE
-    NCP_ACCESS_KEY         = var.NCP_ACCESS_KEY
-    NCP_SECRET_KEY         = var.NCP_SECRET_KEY
-    NCP_LB_DOMAIN          = var.NCP_LB_DOMAIN
-    POSTGRES_DB            = var.POSTGRES_DB
-    POSTGRES_USER          = var.POSTGRES_USER
-    POSTGRES_PASSWORD      = var.POSTGRES_PASSWORD
-    POSTGRES_PORT          = var.POSTGRES_PORT
-    DB_HOST                = ncloud_public_ip.db.public_ip
+    username               = var.username
+    password               = var.password
+    django_settings_module = var.django_settings_module
+    django_secret_key      = var.django_secret_key
+    django_container_name  = var.django_container_name
+    ncr_host               = var.ncr_host
+    ncr_image              = var.ncr_image
+    ncp_access_key         = var.ncp_access_key
+    ncp_secret_key         = var.ncp_secret_key
+    ncp_lb_domain          = var.ncp_lb_domain
+    postgres_db            = var.postgres_db
+    postgres_user          = var.postgres_user
+    postgres_password      = var.postgres_password
+    postgres_port          = var.postgres_port
+    db_host                = ncloud_public_ip.db.public_ip
   })
 }
 
@@ -162,14 +162,14 @@ resource "ncloud_network_interface" "db" {
 resource "ncloud_init_script" "db" {
   name = "db-init-${var.env}"
   content = templatefile("${path.module}/db_init_script.tftpl", {
-    USERNAME          = var.USERNAME
-    PASSWORD          = var.PASSWORD
-    POSTGRES_DB       = var.POSTGRES_DB
-    POSTGRES_USER     = var.POSTGRES_USER
-    POSTGRES_PASSWORD = var.POSTGRES_PASSWORD
-    POSTGRES_PORT     = var.POSTGRES_PORT
-    POSTGRES_VOLUME   = var.POSTGRES_VOLUME
-    DB_CONTAINER_NAME = var.DB_CONTAINER_NAME
+    username          = var.username
+    password          = var.password
+    postgres_db       = var.postgres_db
+    postgres_user     = var.postgres_user
+    postgres_password = var.postgres_password
+    postgres_port     = var.postgres_port
+    postgres_volume   = var.postgres_volume
+    db_container_name = var.db_container_name
   })
 }
 

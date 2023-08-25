@@ -1,74 +1,74 @@
-variable "USERNAME" {
+variable "username" {
   type      = string
   sensitive = true
 }
 
-variable "PASSWORD" {
+variable "password" {
   type      = string
   sensitive = true
 }
 
-variable "DJANGO_SETTINGS_MODULE" {
+variable "django_settings_module" {
   type = string
 }
 
-variable "DJANGO_SECRET_KEY" {
+variable "django_secret_key" {
   type      = string
   sensitive = true
 }
 
-variable "DJANGO_CONTIANER_NAME" {
+variable "django_container_name" {
   type = string
 }
 
-variable "NCR_HOST" {
+variable "ncr_host" {
   type      = string
   sensitive = true
 }
 
-variable "NCR_IMAGE" {
+variable "ncr_image" {
   type = string
 }
 
-variable "NCP_ACCESS_KEY" {
+variable "ncp_access_key" {
   type      = string
   sensitive = true
 }
 
-variable "NCP_SECRET_KEY" {
+variable "ncp_secret_key" {
   type      = string
   sensitive = true
 }
 
-variable "NCP_LB_DOMAIN" {
+variable "ncp_lb_domain" {
   type      = string
   sensitive = true
 }
 
-variable "POSTGRES_DB" {
+variable "postgres_db" {
   type      = string
   sensitive = true
 }
 
-variable "POSTGRES_USER" {
+variable "postgres_user" {
   type      = string
   sensitive = true
 }
 
-variable "POSTGRES_PASSWORD" {
+variable "postgres_password" {
   type      = string
   sensitive = true
 }
 
-variable "POSTGRES_PORT" {
+variable "postgres_port" {
   type    = number
   default = 5432
 }
 
-variable "POSTGRES_VOLUME" {
+variable "postgres_volume" {
   type = string
 }
 
-variable "DB_CONTAINER_NAME" {
+variable "db_container_name" {
   type = string
 }
