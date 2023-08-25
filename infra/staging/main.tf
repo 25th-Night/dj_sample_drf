@@ -20,7 +20,7 @@ locals {
   stage = "staging"
 }
 
-module "vpc" {
+module "network" {
   source = "../modules/network"
 
   ncp_access_key = var.ncp_access_key
@@ -34,8 +34,8 @@ module "db" {
   ncp_access_key   = var.ncp_access_key
   ncp_secret_key   = var.ncp_secret_key
   env              = local.stage
-  vpc_id           = module.vpc.vpc_id
-  subnet_id        = module.vpc.subnet_id
+  vpc_id           = module.network.vpc_id
+  subnet_id        = module.network.subnet_id
   name             = "db"
   acg_port_range   = 5432
   init_script_path = "db_init_script.tftpl"
@@ -58,8 +58,8 @@ module "be" {
   ncp_access_key   = var.ncp_access_key
   ncp_secret_key   = var.ncp_secret_key
   env              = local.stage
-  vpc_id           = module.vpc.vpc_id
-  subnet_id        = module.vpc.subnet_id
+  vpc_id           = module.network.vpc_id
+  subnet_id        = module.network.subnet_id
   name             = "be"
   acg_port_range   = 8000
   init_script_path = "be_init_script.tftpl"
@@ -91,7 +91,7 @@ module "load_balancer" {
   ncp_access_key        = var.ncp_access_key
   ncp_secret_key        = var.ncp_secret_key
   env                   = local.stage
-  vpc_id                = module.vpc.vpc_id
+  vpc_id                = module.network.vpc_id
   be_server_instance_no = module.be.server_instance_no
 }
 
