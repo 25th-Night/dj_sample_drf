@@ -55,8 +55,11 @@ resource "ncloud_network_interface" "main" {
 }
 
 resource "ncloud_init_script" "main" {
-  name    = "set-${var.name}-init-${var.env}"
-  content = templatefile("${path.module}/${var.init_script_path}", var.init_script_envs)
+  name = "set-${var.name}-init-${var.env}"
+  content = templatefile(
+    "${path.module}/${var.init_script_path}",
+    var.init_script_envs
+  )
 }
 
 resource "ncloud_server" "main" {
