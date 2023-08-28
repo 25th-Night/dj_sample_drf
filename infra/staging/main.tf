@@ -1,4 +1,10 @@
 terraform {
+  backend "local" {
+    path = "/Users/brown/Study/Lecture/TI/terraform_study/states/staging.tfstate"
+  }
+
+  #   backend "pg" {}
+
   required_providers {
     ncloud = {
       source = "NaverCloudPlatform/ncloud"
