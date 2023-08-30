@@ -1,14 +1,19 @@
+import uuid
+
 from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema, OpenApiParameter
+from django.conf import settings
+from django.core.files.base import File
 
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.decorators import action
 
+import boto3
 
 from .models import Post, Topic, TopicGroupUser
-from .serializers import PostSerializer, TopicSerializer
+from .serializers import PostSerializer, PostUploadSerializer, TopicSerializer
 
 
 @extend_schema(tags=["Topic"])
@@ -59,6 +64,11 @@ class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
 
+    def get_serializer_class(self):
+        if self.action == "create":
+            return PostUploadSerializer
+        return super().get_serializer_class()
+
     @extend_schema(deprecated=True)
     def list(self, request, *args, **kwargs):
         return Response(status=status.HTTP_400_BAD_REQUEST, data="Deprecated API")
@@ -75,10 +85,41 @@ class PostViewSet(viewsets.ModelViewSet):
                 data="This user is not allowed to write a post on this topic",
             )
 
+        # If image exists
+        if image := request.data.get("image"):
+            print(type(image))
+            image: File
+            endpoint_url = "https://kr.object.ncloudstorage.com"
+            access_key = settings.NCP_ACCESS_KEY
+            secret_key = settings.NCP_SECRET_KEY
+            bucket_name = settings.S3_BUCKET_NAME
+
+            s3 = boto3.client(
+                service_name="s3",
+                endpoint_url=endpoint_url,
+                aws_access_key_id=access_key,
+                aws_secret_access_key=secret_key,
+            )
+
+            # upload it to Object Storage(S3)
+            ext = image.name.split(".")[-1]
+            image_id = str(uuid.uuid4())
+            image_filename = f"{image_id}.{ext}"
+            s3.upload_fileobj(image.file, bucket_name, image_filename)
+
+            # and get its url
+            image_url = f"{endpoint_url}/{bucket_name}/{image_filename}"
+
+            # file access permission change
+            response = s3.put_object_acl(
+                Bucket=bucket_name, Key=image_filename, ACL="public-read"
+            )
+
         serializer: PostSerializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             data = serializer.validated_data
             data["owner"] = user
+            data["image_url"] = image_url if image else None
             res: Post = serializer.create(data)
             return Response(
                 status=status.HTTP_201_CREATED, data=PostSerializer(res).data
