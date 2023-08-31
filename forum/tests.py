@@ -10,8 +10,6 @@ from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
 
-import io
-from PIL import Image
 from unittest.mock import patch
 
 from .models import Topic, Post, TopicGroupUser
