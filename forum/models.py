@@ -36,6 +36,19 @@ class Post(models.Model):
     def __str__(self):
         return self.title
 
+    def can_be_access_by(self, user: User):
+        if (
+            self.topic.owner == user
+            or self.owner == user
+            or TopicGroupUser.objects.filter(
+                user=user,
+                group=TopicGroupUser.GroupChoices.admin,
+                topic=self.topic,
+            ).exists()
+        ):
+            return True
+        return False
+
 
 class TopicGroupUser(models.Model):
     class GroupChoices(models.IntegerChoices):
