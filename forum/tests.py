@@ -1,4 +1,7 @@
 import json
+import tempfile
+from tarfile import data_filter
+from unittest.mock import patch, MagicMock
 
 from django.contrib.auth.models import User
 from django.db.models.query import QuerySet
@@ -6,6 +9,10 @@ from django.http import HttpResponse
 from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
+
+import io
+from PIL import Image
+from unittest.mock import patch
 
 from .models import Topic, Post, TopicGroupUser
 
@@ -53,6 +60,14 @@ class PostTest(APITestCase):
             group=TopicGroupUser.GroupChoices.admin,
             user=cls.admin_user,
         )
+
+    def generate_photo_file(self):
+        file = io.BytesIO()
+        image = Image.new("RGBA", size=(100, 100), color=(155, 0, 0))
+        image.save(file, "png")
+        file.name = "test.png"
+        file.seek(0)
+        return file
 
     # Test
     def test_write_permission_on_private_topic(self):
@@ -142,3 +157,33 @@ class PostTest(APITestCase):
             reverse("post-detail", args=[private_post.pk])
         )
         self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+    @patch("forum.views.boto3.client")
+    def test_post_with_or_without_image(self, client: MagicMock):
+        # mock s3
+        s3 = MagicMock()
+        client.return_value = s3
+        s3.upload_fileobj.return_value = None
+        s3.put_object_acl.return_value = None
+        # without image => success.
+        data = {
+            "title": "test",
+            "content": "test",
+            "topic": self.public_topic.pk,
+        }
+        self.client.force_login(self.authorized_user)
+        res = self.client.post(reverse("post-list"), data=data)
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+
+        # with image => success.
+        with tempfile.NamedTemporaryFile(suffix=".jpg") as tmpfile:
+            data["image"] = tmpfile
+            res = self.client.post(reverse("post-list"), data=data)
+            self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+            res_data = json.loads(res.content)
+            # self.assertContains(res, res_data["image_url"])
+            print(res_data["image_url"])
+            self.assertTrue(res_data["image_url"].startswith("https://"))
+
+        s3.upload_fileobj.assert_called_once()
+        s3.put_object_acl.assert_called_once()
