@@ -58,14 +58,6 @@ class PostTest(APITestCase):
             user=cls.admin_user,
         )
 
-    def generate_photo_file(self):
-        file = io.BytesIO()
-        image = Image.new("RGBA", size=(100, 100), color=(155, 0, 0))
-        image.save(file, "png")
-        file.name = "test.png"
-        file.seek(0)
-        return file
-
     # Test
     def test_write_permission_on_private_topic(self):
         data = {
