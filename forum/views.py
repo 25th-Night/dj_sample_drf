@@ -139,3 +139,19 @@ class PostViewSet(viewsets.ModelViewSet):
             )
 
         return super().retrieve(request, *args, **kwargs)
+
+    def destroy(self, request: Request, *args, **kwargs):
+        # Authorization check
+        # Topic owner, admin user can delete any post in the topic
+        # common user can delete only their posts
+
+        post: Post = self.get_object()
+        user = request.user
+
+        if not post.can_be_access_by(user):
+            return Response(
+                status=status.HTTP_401_UNAUTHORIZED,
+                data="This user is not allowed to delete a post on this topic",
+            )
+
+        return super().destroy(request, *args, **kwargs)
