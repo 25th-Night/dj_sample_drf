@@ -46,6 +46,6 @@ urlpatterns = [
         SpectacularRedocView.as_view(url_name="api-schema"),
         name="api-redoc",
     ),
-    path("health", HealthCheckView.as_view(), name="health_check"),
-    path("health/", healthcheck, name="healthcheck"),
+    # path("health", HealthCheckView.as_view(), name="health_check"),
+    # path("health/", healthcheck, name="healthcheck"),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
