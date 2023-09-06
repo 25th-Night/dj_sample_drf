@@ -27,6 +27,7 @@ from drf_spectacular.views import (
 
 from blog.urls import router as blog_router
 from forum.urls import router as forum_router
+from common.views import HealthCheckView, healthcheck
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -45,4 +46,6 @@ urlpatterns = [
         SpectacularRedocView.as_view(url_name="api-schema"),
         name="api-redoc",
     ),
+    path("health", HealthCheckView.as_view(), name="health_check"),
+    path("health/", healthcheck, name="healthcheck"),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
