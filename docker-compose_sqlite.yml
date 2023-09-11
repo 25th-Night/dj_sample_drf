@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  lion-app:
+    container_name: lion-app-sqlite
+    build:
+      context: .
+      dockerfile: Dockerfile_test
+    command: /start
+    environment:
+      - DJANGO_SETTINGS_MODULE=config.settings.test
+    env_file:
+      - ./.envs/local/server
