@@ -1,0 +1,34 @@
+replicaCount: 3
+
+image:
+  repository: browneyed.kr.ncr.ntruss.com/lion-app
+  pullPolicy: IfNotPresent
+  tag: ""
+
+imagePullSecrets: 
+  - name: regcred
+nameOverride: ""
+fullnameOverride: ""
+
+
+service:
+  type: LoadBalancer
+  port: 80
+
+containerPort: 8000
+
+dbService:
+  type: NodePort
+  port: 5432
+
+configMap:
+  django:
+    DJANGO_SETTINGS_MODULE: "config.settings.prod"
+secret:
+  django:
+    DJANGO_SECRET_KEY:
+  db:
+    POSTGRES_DB:
+    POSTGRES_USER:
+    POSTGRES_PASSWORD:
+    POSTGRES_PORT:
