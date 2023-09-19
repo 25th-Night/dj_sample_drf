@@ -30,15 +30,8 @@ jobs:
                 sed -i "s/appVersion.*/appVersion: ${{ steps.version.outputs.VERSION }}/g" lionp/Chart.yaml
                 cat lionp/Chart.yaml
               shell: bash
-            # - name: Commit and Push to Repository
-            #   uses: stefanzweifel/git-auto-commit-action@v4
-            #   with:
-            #     commit_message: Apply CD
-            #     branch : true
-            - name: commit and push
-              run: |
-                git add .
-                git config --local user.email "brown_eyed87@naver.com"
-                git config --local user.name "25th-Night"
-                git commit -m "Update Version"
-                git push
+            - name: Commit and Push to Repository
+              uses: stefanzweifel/git-auto-commit-action@v4
+              with:
+                commit_message: Apply CD
+                branch : main
