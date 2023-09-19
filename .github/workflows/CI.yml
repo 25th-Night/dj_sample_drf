@@ -62,7 +62,7 @@ jobs:
               uses: docker/build-push-action@v4
               with:
                 context: .
-                tags: ${{ env.IMAGE_TAG }},${{ env.IMAGE }}:${{ steps.image-tag.outputs.TIMESTAMP }}, ${{ env.IMAGE }}:{{ github.event.release.name }}
+                tags: ${{ env.IMAGE_TAG }},${{ env.IMAGE }}:${{ steps.image-tag.outputs.TIMESTAMP }}, ${{ env.IMAGE }}:${{ github.event.release.name }}
                 file: Dockerfile_django
                 push: true
 
