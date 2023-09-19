@@ -22,17 +22,14 @@ jobs:
                 ref: main
                 token: ${{ secrets.PAT }}
 
-            - name: Get version
-              run: export VERSION=${GITHUB_REF#refs/tags/}
-
             - name: Update appVersion
               run: |
-                sed -ie "s/appVersion.*/appVersion: $VERSION/g" lionp/Chart.yaml
+                sed -ie "s/appVersion.*/appVersion: ${{ github.ref_name }}/g" lionp/Chart.yaml
                 cat lionp/Chart.yaml
               shell: bash
 
             - name: Commit and Push to Repository
               uses: stefanzweifel/git-auto-commit-action@v4
               with:
-                commit_message: Update Version to $VERSION
+                commit_message: Update Version to ${{ github.ref_name }}
                 branch : main
