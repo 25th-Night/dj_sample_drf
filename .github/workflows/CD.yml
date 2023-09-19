@@ -28,8 +28,14 @@ jobs:
                 cat lionp/Chart.yaml
               shell: bash
 
-            - name: Commit and Push to Repository
-              uses: stefanzweifel/git-auto-commit-action@v4
+            - name: Commit files
+              run: |
+                git config --local user.email "brown_eyed87@naver.com"
+                git config --local user.name "25th-Night"
+                git commit -a -m "Add changes"
+            - name: Push changes
+              uses: ad-m/github-push-action@master
               with:
-                commit_message: Update Version to ${{ github.ref_name }}
-                branch : main
+                github_token: ${{ secrets.GITHUB_TOKEN }}
+                repository: 25th-Night/lion-k8s
+                branch: main
