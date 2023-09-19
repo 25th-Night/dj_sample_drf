@@ -296,3 +296,9 @@ crash.*.log
 
 # lock file
 .terraform.lock.hcl
+
+
+# Helm
+
+*/prod_values.yaml
+*/staging_values.yaml
