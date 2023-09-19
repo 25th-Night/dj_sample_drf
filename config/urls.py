@@ -27,7 +27,7 @@ from drf_spectacular.views import (
 
 from blog.urls import router as blog_router
 from forum.urls import router as forum_router
-from common.views import HealthCheckView, healthcheck
+from common.views import HealthCheckView, healthcheck, get_version
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -48,4 +48,5 @@ urlpatterns = [
     ),
     # path("health", HealthCheckView.as_view(), name="health_check"),
     # path("health/", healthcheck, name="healthcheck"),
+    path("version/", get_version, name="get_version"),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
