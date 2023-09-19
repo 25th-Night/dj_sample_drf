@@ -21,17 +21,18 @@ jobs:
                 repository: 25th-Night/lion-k8s
                 ref: main
                 token: ${{ secrets.PAT }}
+
             - name: Get version
-              if: startsWith(github.ref, 'refs/tags')
-              id: version
-              run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
-            - name: Update Chart.yaml
+              run: export VERSION=${GITHUB_REF#refs/tags/}
+
+            - name: Update appVersion
               run: |
-                sed -i "s/appVersion.*/appVersion: ${{ steps.version.outputs.VERSION }}/g" lionp/Chart.yaml
+                sed -ie "s/appVersion.*/appVersion: $VERSION/g" lionp/Chart.yaml
                 cat lionp/Chart.yaml
               shell: bash
+
             - name: Commit and Push to Repository
               uses: stefanzweifel/git-auto-commit-action@v4
               with:
-                commit_message: Update Version to ${{ steps.version.outputs.VERSION }}
+                commit_message: Update Version to $VERSION
                 branch : main
