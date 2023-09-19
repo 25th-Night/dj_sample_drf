@@ -1,9 +1,9 @@
-name: CD using Docker Image
+name: CD using ArgoCD
 
 on:
-    push:
-        tags:
-            - "*.*.*"
+    release:
+        types:
+            - published
 
 env:
     IMAGE: ${{ vars.NCR_HOST }}/lion-app
@@ -24,18 +24,12 @@ jobs:
 
             - name: Update appVersion
               run: |
-                sed -ie "s/appVersion.*/appVersion: ${{ github.ref_name }}/g" lionp/Chart.yaml
+                sed -ie "s/appVersion.*/appVersion: ${{ github.event.release.tag_name }}/g" lionp/Chart.yaml
                 cat lionp/Chart.yaml
               shell: bash
 
-            - name: Commit files
-              run: |
-                git config --local user.email "brown_eyed87@naver.com"
-                git config --local user.name "25th-Night"
-                git commit -a -m "Add changes"
-            - name: Push changes
-              uses: ad-m/github-push-action@master
+            - name: Commit and Push to Repository
+              uses: stefanzweifel/git-auto-commit-action@v4
               with:
-                github_token: ${{ secrets.GITHUB_TOKEN }}
-                repository: 25th-Night/lion-k8s
-                branch: main
+                commit_message: Update Version to ${{ github.event.release.tag_name }}
+                branch : main
