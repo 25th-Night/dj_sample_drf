@@ -3,13 +3,10 @@ name: CI
 on:
     pull_request:
     push:
-        tags:
-            - '*'
         branches:
             - main
-    release:
-        types:
-            - published
+        tags:
+            - "*.*.*"
 
 env:
     IMAGE: ${{ vars.NCR_HOST }}/lion-app
@@ -64,14 +61,25 @@ jobs:
               run: echo "TIMESTAMP=$(date "+%s")" >> "$GITHUB_OUTPUT"
 
             - name: Get version
+              if: startsWith(github.ref, 'refs/tags')
               id: version
               run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
 
             - name: Build and Push
+              if: startsWith(github.ref, 'refs/heads')
               uses: docker/build-push-action@v4
               with:
                 context: .
-                tags: ${{ env.IMAGE_TAG }},${{ env.IMAGE }}:${{ steps.image-tag.outputs.TIMESTAMP }},${{ env.IMAGE }}:${{ steps.version.outputs.VERSION }}
+                tags: ${{ env.IMAGE_TAG }},${{ env.IMAGE }}:${{ steps.image-tag.outputs.TIMESTAMP }}
+                file: Dockerfile_django
+                push: true
+
+            - name: Build and Push
+              if: startsWith(github.ref, 'refs/tags')
+              uses: docker/build-push-action@v4
+              with:
+                context: .
+                tags: ${{ env.IMAGE_TAG }},${{ env.IMAGE }}:${{ steps.version.outputs.VERSION }}
                 file: Dockerfile_django
                 push: true
 
