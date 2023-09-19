@@ -7,7 +7,7 @@ on:
             - main
     release:
         types:
-            - released
+            - published
 
 env:
     IMAGE: ${{ vars.NCR_HOST }}/lion-app
@@ -61,11 +61,15 @@ jobs:
               id: image-tag
               run: echo "TIMESTAMP=$(date "+%s")" >> "$GITHUB_OUTPUT"
 
+            - name: Get version
+              id: version
+              run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
+
             - name: Build and Push
               uses: docker/build-push-action@v4
               with:
                 context: .
-                tags: ${{ env.IMAGE_TAG }},${{ env.IMAGE }}:${{ steps.image-tag.outputs.TIMESTAMP }},${{ env.IMAGE }}:${{ github.event.release.tag_name }}
+                tags: ${{ env.IMAGE_TAG }},${{ env.IMAGE }}:${{ steps.image-tag.outputs.TIMESTAMP }},${{ env.IMAGE }}:${{ steps.version.outputs.VERSION }}
                 file: Dockerfile_django
                 push: true
 
