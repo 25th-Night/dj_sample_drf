@@ -33,5 +33,5 @@ jobs:
             - name: Commit and Push to Repository
               uses: stefanzweifel/git-auto-commit-action@v4
               with:
-                commit_message: Apply CD
+                commit_message: Update Version to ${{ steps.version.outputs.VERSION }}
                 branch : main
