@@ -56,6 +56,8 @@ INSTALLED_APPS = [
 INSTALLED_APPS += [
     "rest_framework",
     "drf_spectacular",
+    "django_prometheus",
+    "rest_framework_simplejwt",
 ]
 
 ## Create Apps
@@ -64,6 +66,7 @@ INSTALLED_APPS += [
 ]
 
 MIDDLEWARE = [
+    "django_prometheus.middleware.PrometheusBeforeMiddleware",
     "common.middleware.HealthCheckMiddleware",
     # "common.middleware.VersionCheckMiddleware",
     "django.middleware.security.SecurityMiddleware",
@@ -73,6 +76,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django_prometheus.middleware.PrometheusAfterMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -108,7 +112,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
+        "ENGINE": "django_prometheus.db.backends.postgresql",  # Database Monitoring by Prometheus
         "NAME": os.getenv("POSTGRES_DB", "postgres"),
         "USER": os.getenv("POSTGRES_USER", "postgres"),
         "PASSWORD": os.getenv("POSTGRES_PASSWORD", "postgres"),
@@ -168,6 +172,9 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.IsAuthenticated",
     ],
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
 }
 
 # SPECTACULAR 설정
@@ -183,3 +190,35 @@ SPECTACULAR_SETTINGS = {
 NCP_ACCESS_KEY = os.getenv("NCP_ACCESS_KEY", "")
 NCP_SECRET_KEY = os.getenv("NCP_SECRET_KEY", "")
 S3_BUCKET_NAME = os.getenv("S3_BUCKET_NAME", "")
+
+
+# Prometheus Latency setting
+
+PROMETHEUS_LATENCY_BUCKETS = (
+    0.01,
+    0.025,
+    0.05,
+    0.075,
+    0.1,
+    0.25,
+    0.5,
+    0.75,
+    1.0,
+    2.5,
+    5.0,
+    7.5,
+    10.0,
+    25.0,
+    50.0,
+    75.0,
+    float("inf"),
+)
+
+
+# Cache Monitoring by Prometheus
+CACHES = {
+    "default": {
+        "BACKEND": "django_prometheus.cache.backends.filebased.FileBasedCache",
+        "LOCATION": "./tmp/django_cache",
+    }
+}

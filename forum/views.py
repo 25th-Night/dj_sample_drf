@@ -40,7 +40,16 @@ class TopicViewSet(viewsets.ModelViewSet):
 
     @extend_schema(summary="새 토픽 생성")
     def create(self, request: Request, *args, **kwargs):
-        return super().create(request, *args, **kwargs)
+        serializer: TopicSerializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            data = serializer.validated_data
+            data["owner"] = request.user
+            res: Topic = serializer.create(data)
+            return Response(
+                status=status.HTTP_201_CREATED, data=TopicSerializer(res).data
+            )
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
 
     @action(detail=True, methods=["get"], url_name="posts")
     def posts(self, request: Request, *args, **kwargs):

@@ -52,6 +52,22 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  prometheus:
+    container_name: prometheus
+    depends_on:
+      - lion-app
+    image: prom/prometheus
+    ports:
+      - 9090:9090
+    volumes:
+      - ./monitoring:/etc/prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --web.console.templates=/etc/proemtheus/consoles
+      - --storage.tsdb.retention.time=10d
+      - --storage.tsdb.retention.size=1GB
+      - --web.enable-admin-api
+
 volumes:
   lion-app-static:
   postgres_data:
