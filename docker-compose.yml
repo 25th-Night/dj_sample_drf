@@ -67,7 +67,22 @@ services:
       - --storage.tsdb.retention.time=10d
       - --storage.tsdb.retention.size=1GB
       - --web.enable-admin-api
+  
+  grafana:
+    container_name: grafana
+    depends_on:
+      - lion-app
+    image: grafana/grafana-oss
+    ports:
+      - 3000:3000
+    volumes:
+      - grafana_data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=1234
+      - GF_USERS_ALLOW_SIGN_UP=false
 
 volumes:
   lion-app-static:
   postgres_data:
+  grafana_data:
